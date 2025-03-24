@@ -83,6 +83,8 @@ document.addEventListener("DOMContentLoaded", function() {
         li.classList.add("dropdown-item");
         li.addEventListener("click", () => {
           document.getElementById("dropdown-selected-keyword").textContent = keyword;
+          // 获取当前下拉菜单并关闭它
+          const dropdown = li.closest('.dropdown'); // 获取包含该 li 的最近的 .dropdown 元素
           dropdown.classList.remove('open');  // 选择后关闭当前下拉框
         });
         keywordMenu.appendChild(li);
