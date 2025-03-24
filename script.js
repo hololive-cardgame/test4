@@ -115,7 +115,7 @@ function generateFilterOptions() {
             li.textContent = tag;
             // li.classList.add("dropdown-item");
             li.addEventListener('click', () => {
-                document.getElementById("dropdown-menu-tag").textContent = tag;
+                document.getElementById("dropdown-selected-tag").textContent = tag;
                 closeAllDropdowns();
             });
             tagMenu.appendChild(li);
