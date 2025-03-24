@@ -1,23 +1,37 @@
 // 等待文檔加載完成
 document.addEventListener("DOMContentLoaded", function() {
-  // 設置下拉選單的點擊事件
-  const dropdowns = document.querySelectorAll('.dropdown-selected');
+  
+  const dropdowns = document.querySelectorAll('.dropdown');
 
-  dropdowns.forEach(dropdown => {
-    dropdown.addEventListener('click', function(event) {
-      const parent = this.parentElement;
-      parent.classList.toggle('open'); // 切換開關顯示下拉選單
+  // 遍历所有下拉菜单，处理每一个下拉菜单的点击事件
+dropdowns.forEach(dropdown => {
+    const dropdownSelected = dropdown.querySelector('.dropdown-selected');
+    const dropdownMenu = dropdown.querySelector('.dropdown-menu');
+    const menuItems = dropdownMenu.querySelectorAll('li');
+
+    // 点击下拉框切换显示
+    dropdownSelected.addEventListener('click', (e) => {
+        e.stopPropagation();  // 防止点击下拉框时事件冒泡到文档上，关闭其他下拉框
+        dropdown.classList.toggle('open');
     });
-  });
 
-  // 點擊下拉選單以外區域時，關閉下拉選單
-  document.addEventListener('click', function(event) {
-    if (!event.target.closest('.dropdown')) {
-      dropdowns.forEach(dropdown => {
-        dropdown.parentElement.classList.remove('open');
-      });
-    }
-  });
+    // 选择选项
+    menuItems.forEach(item => {
+        item.addEventListener('click', () => {
+            dropdownSelected.textContent = item.textContent;
+            dropdown.classList.remove('open');
+        });
+    });
+});
+
+// 点击外部关闭下拉菜单
+document.addEventListener('click', (e) => {
+    dropdowns.forEach(dropdown => {
+        if (!dropdown.contains(e.target)) {
+            dropdown.classList.remove('open');
+        }
+    });
+});
 
   // 使用 fetch 從 JSON 檔案載入資料
   fetch("cards.json")
