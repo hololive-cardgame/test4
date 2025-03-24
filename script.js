@@ -1,6 +1,5 @@
 document.addEventListener("DOMContentLoaded", function() {
   // 遍历所有下拉菜单，处理每一个下拉菜单的点击事件
-
   const dropdowns = document.querySelectorAll('.dropdown');
   dropdowns.forEach(dropdown => {
     const dropdownSelected = dropdown.querySelector('.dropdown-selected');
@@ -17,7 +16,7 @@ document.addEventListener("DOMContentLoaded", function() {
     menuItems.forEach(item => {
       item.addEventListener('click', () => {
         dropdownSelected.textContent = item.textContent;
-        dropdown.classList.remove('open');
+        dropdown.classList.remove('open');  // 选择后关闭当前下拉框
       });
     });
   });
@@ -31,31 +30,32 @@ document.addEventListener("DOMContentLoaded", function() {
       }
     });
   });
-  // 使用 fetch 從 JSON 檔案載入資料
+
+  // 使用 fetch 从 JSON 文件加载数据
   fetch("cards.json")
-    .then(response => response.json())  // 解析 JSON 資料
+    .then(response => response.json())  // 解析 JSON 数据
     .then(data => {
         cardsData = data;
-        generateFilterOptions();  // 生成篩選選項
-        displayCards(cardsData);  // 顯示所有卡牌
+        generateFilterOptions();  // 生成筛选选项
+        displayCards(cardsData);  // 显示所有卡牌
     })
     .catch(error => {
         console.error("Error loading the card data:", error);
     });
 
-  // 根據 JSON 資料生成篩選選項
+  // 根据 JSON 数据生成筛选选项
   function generateFilterOptions() {
     const keywords = new Set();
     const types = new Set();
     const attributes = new Set();
     const tags = new Set();
     const sets = {
-      "起始牌組": new Set(),
-      "補充包": new Set(),
+      "起始牌组": new Set(),
+      "补充包": new Set(),
       "其他": new Set()
     };
 
-    // 這是用來儲存卡牌名稱的集合
+    // 这是用来储存卡牌名称的集合
     cardsData.forEach(card => {
       keywords.add(card.name);
       types.add(card.type);
@@ -64,17 +64,17 @@ document.addEventListener("DOMContentLoaded", function() {
         card.tag.split(" / ").forEach(tag => tags.add(tag));
       }
       if (card.set) {
-        if (card.set.includes("起始牌組")) {
-          sets["起始牌組"].add(card.set);
-        } else if (card.set.includes("補充包")) {
-          sets["補充包"].add(card.set);
+        if (card.set.includes("起始牌组")) {
+          sets["起始牌组"].add(card.set);
+        } else if (card.set.includes("补充包")) {
+          sets["补充包"].add(card.set);
         } else if (card.set === "配件" || card.set === "PR卡") {
           sets["其他"].add(card.set);
         }
       }
     });
 
-    // 填充關鍵字選項
+    // 填充关键字选项
     const keywordMenu = document.getElementById("dropdown-menu-keyword");
     keywords.forEach(keyword => {
       if (keyword) {
@@ -83,8 +83,7 @@ document.addEventListener("DOMContentLoaded", function() {
         li.classList.add("dropdown-item");
         li.addEventListener("click", () => {
           document.getElementById("dropdown-selected-keyword").textContent = keyword;
-          // 隱藏選單
-          document.querySelector('.dropdown').classList.remove('open');
+          dropdown.classList.remove('open');  // 选择后关闭当前下拉框
         });
         keywordMenu.appendChild(li);
       }
