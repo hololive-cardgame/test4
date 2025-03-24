@@ -83,3 +83,9 @@ main {
     margin: 0;
     padding: 0;
 }
+
+/* 設置卡包分類 */
+.category-label {
+    background-color: #da7e7e;
+    color: #7eda9c;
+}
