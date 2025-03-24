@@ -48,6 +48,10 @@ function generateFilterOptions() {
             const li = document.createElement("li");
             li.textContent = keyword;
             // li.classList.add("dropdown-item");
+            li.addEventListener('click', () => {
+                document.getElementById("dropdown-selected-keyword").textContent = keyword;
+                closeAllDropdowns();
+            });
             keywordMenu.appendChild(li);
         }
     });
