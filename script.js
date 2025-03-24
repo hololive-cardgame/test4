@@ -51,25 +51,35 @@ function generateFilterOptions() {
             li.textContent = keyword;
             // li.classList.add("dropdown-item");
             li.addEventListener("click", () => {
-            document.getElementById("dropdown-selected-keyword").textContent = keyword;
-            filterCards();
+                document.getElementById("dropdown-selected-keyword").textContent = keyword;
+                filterCards();
+                closeAllDropdowns();
             });
             keywordMenu.appendChild(li);
         }
     });
 }
 
+// 關閉所有下拉選單
+function closeAllDropdowns() {
+    const dropdowns = document.querySelectorAll('.dropdown');
+    dropdowns.forEach(dropdown => {
+        dropdown.classList.remove('open');  // 隱藏下拉選單
+    });
+}
+
 // 設置下拉選單點擊事件
 const dropdowns = document.querySelectorAll('.dropdown');  // 所有下拉選單
-// 監聽所有下拉選單
 dropdowns.forEach(dropdown => {
     const dropdownSelected = dropdown.querySelector('.dropdown-selected');  // 下拉選單顯示框
     const dropdownMenu = dropdown.querySelector('.dropdown-menu');  // 下拉選單列表
     const menuItems = dropdownMenu.querySelectorAll('li');  // 選項
+    
     // 點擊下拉選單顯示框
     dropdownSelected.addEventListener('click', (e) => {
         e.stopPropagation();
-        dropdown.classList.toggle('open');  // 切換開啟或關閉下拉選單
+        closeAllDropdowns();
+        dropdown.classList.toggle('open');  // 切換當前下拉選單的開關狀態
     });
 
     // 點擊選項後更新顯示區域並關閉選單
@@ -83,10 +93,7 @@ dropdowns.forEach(dropdown => {
 
 // 點擊其他地方關閉所有下拉選單
 document.addEventListener('click', (e) => {
-    dropdowns.forEach(dropdown => {
-    // 如果點擊的不是下拉選單或其子元素，則關閉下拉選單
-        if (!dropdown.contains(e.target)) {
-            dropdown.classList.remove('open');
-        }
-    });
+    if (!e.target.closest('.dropdown')) {  // 如果點擊的不是下拉選單區域
+        closeAllDropdowns();  // 關閉所有下拉選單
+    }
 });
