@@ -87,7 +87,7 @@ function generateFilterOptions() {
         }
     });
 
-    // 清空屬性、多選框
+    // 填充類型選項，多選框
     const attributeSelect = document.getElementById("attribute");  // 屬性
     
     attributeSelect.innerHTML = "";
@@ -120,6 +120,40 @@ function generateFilterOptions() {
             });
             tagMenu.appendChild(li);
         }
+    });
+
+    // 填充卡包選項
+    const setMenu = document.getElementById("dropdown-menu-set");  // 卡包下拉選單列表
+
+    Object.keys(sets).forEach(category => {
+        // 創建一個不可點擊的分類標籤
+        const categoryLabel = document.createElement("li");
+        categoryLabel.textContent = category;  // 顯示類別名稱（如「起始牌組」）
+        categoryLabel.classList.add("category-label");  // 標識這是分類標籤
+        // categoryLabel.classList.add("dropdown-item");
+        categoryLabel.style.fontWeight = "bold";  // 可以加粗字體來區分分類標籤
+        categoryLabel.style.cursor = "default";  // 設置為不可點擊（顯示默認的光標）
+
+        setMenu.appendChild(categoryLabel);
+
+        // 在每個分類下面，添加一個新的 ul 來顯示該類別下的選項
+        const subMenu = document.createElement("ul");
+        subMenu.classList.add("sub-menu");  // 用於區分子選單
+
+        // 添加該分類下的所有卡包選項
+        sets[category].forEach(set => {
+            const setOption = document.createElement("li");
+            setOption.textContent = set;
+            // setOption.classList.add("dropdown-item");
+            setOption.addEventListener('click', () => {
+                // 當選擇某個卡包時更新顯示框
+                document.getElementById("dropdown-selected-set").textContent = set;
+                closeAllDropdowns();
+            });
+            subMenu.appendChild(setOption);
+        });
+
+        setMenu.appendChild(subMenu);  // 把該類別的選項（subMenu）添加到分類下面
     });
 }
 
