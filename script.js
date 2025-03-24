@@ -66,6 +66,12 @@ function generateFilterOptions() {
     allOption.dataset.value = "allOption";  // 自定義數據屬性
     typeMenu.appendChild(allOption);
 
+    // 點擊「全部」選項後的操作
+    allOption.addEventListener("click", () => {
+        dropdownSelected.textContent = "全部";  // 設為顯示「全部」
+        closeAllDropdowns();
+    });
+
     types.forEach(type => {
         if (type) {
             const li = document.createElement("li");
@@ -77,12 +83,6 @@ function generateFilterOptions() {
             });
             typeMenu.appendChild(li);
         }
-    });
-
-    // 點擊「全部」選項後的操作
-    allOption.addEventListener("click", () => {
-        dropdownSelected.textContent = "全部";  // 設為顯示「全部」
-        closeAllDropdowns();
     });
 
     // 清空屬性、多選框
