@@ -43,6 +43,7 @@ function generateFilterOptions() {
 
     // 填充關鍵字選項
     const keywordMenu = document.getElementById("dropdown-menu-keyword");  // 關鍵字下拉選單列表
+    
     keywords.forEach(keyword => {
         if (keyword) {
             const li = document.createElement("li");
@@ -88,6 +89,7 @@ function generateFilterOptions() {
 
     // 清空屬性、多選框
     const attributeSelect = document.getElementById("attribute");  // 屬性
+    
     attributeSelect.innerHTML = "";
     attributes.forEach(attr => {
         if (attr) {
@@ -99,6 +101,24 @@ function generateFilterOptions() {
             label.appendChild(checkbox);
             label.appendChild(document.createTextNode(attr));
             attributeSelect.appendChild(label);
+        }
+    });
+
+    // 將 Set 轉換為數組，並進行排序
+    const sortedTags = Array.from(tags).sort();
+    // 填充標籤選項
+    const tagMenu = document.getElementById("dropdown-menu-tag");  // 標籤下拉選單列表
+
+    sortedTags.forEach(tag => {
+        if (tag) {
+            const li = document.createElement("li");
+            li.textContent = tag;
+            // li.classList.add("dropdown-item");
+            li.addEventListener('click', () => {
+                document.getElementById("dropdown-menu-tag").textContent = tag;
+                closeAllDropdowns();
+            });
+            tagMenu.appendChild(li);
         }
     });
 }
