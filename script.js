@@ -133,6 +133,7 @@ function generateFilterOptions() {
         // categoryLabel.classList.add("dropdown-item");
         categoryLabel.style.fontWeight = "bold";  // 可以加粗字體來區分分類標籤
         categoryLabel.style.cursor = "default";  // 設置為不可點擊（顯示默認的光標）
+        categoryLabel.style.pointerEvents = "none";  // 禁用滑鼠事件
 
         setMenu.appendChild(categoryLabel);
 
