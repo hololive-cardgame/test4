@@ -1,6 +1,3 @@
-// 取得所有的篩選選單元素
-const keywordMenu = document.getElementById("dropdown-menu-keyword");  // 關鍵字下拉選單列表
-
 // 使用 fetch 從 JSON 檔案載入資料
 fetch("cards.json")
     .then(response => response.json())  // 解析 JSON 資料
@@ -45,6 +42,7 @@ function generateFilterOptions() {
     });
 
     // 填充關鍵字選項
+    const keywordMenu = document.getElementById("dropdown-menu-keyword");  // 關鍵字下拉選單列表
     keywords.forEach(keyword => {
         if (keyword) {
             const li = document.createElement("li");
