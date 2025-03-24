@@ -53,6 +53,8 @@ main {
   right: 0;
   display: none;
   list-style-type: none;
+    max-height: 150px;  /* 设置最大高度 */
+    overflow-y: auto;
   margin: 0;
   padding: 0;
   border: 1px solid #ccc;
