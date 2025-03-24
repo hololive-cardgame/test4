@@ -55,6 +55,35 @@ function generateFilterOptions() {
             keywordMenu.appendChild(li);
         }
     });
+
+    // 填充類型選項
+    const typeMenu = document.getElementById("dropdown-menu-type");  // 類型下拉選單列表
+    
+    // 先添加「全部」選項作為第一個選項
+    const allOption = document.createElement("li");
+    allOption.textContent = "全部";
+    allOption.classList.add("selected");  // 設為已選中
+    allOption.dataset.value = "allOption";  // 自定義數據屬性
+    typeMenu.appendChild(allOption);
+
+    types.forEach(type => {
+        if (type) {
+            const li = document.createElement("li");
+            li.textContent = type;
+            // li.classList.add("dropdown-item");
+            li.addEventListener('click', () => {
+                document.getElementById("dropdown-selected-type").textContent = type;
+                closeAllDropdowns();
+            });
+            typeMenu.appendChild(li);
+        }
+    });
+
+    // 點擊「全部」選項後的操作
+    allOption.addEventListener("click", () => {
+        dropdownSelected.textContent = "全部";  // 設為顯示「全部」
+        closeAllDropdowns();
+    });
 }
 
 // 設置下拉選單點擊事件
