@@ -1,6 +1,6 @@
 document.addEventListener("DOMContentLoaded", function() {
   // 遍历所有下拉菜单，处理每一个下拉菜单的点击事件
-  const dropdowns = document.querySelectorAll('.dropdown');
+  const dropdowns = document.querySelectorAll('.dropdown'); // 获取所有dropdown元素
   dropdowns.forEach(dropdown => {
     const dropdownSelected = dropdown.querySelector('.dropdown-selected');
     const dropdownMenu = dropdown.querySelector('.dropdown-menu');
@@ -9,7 +9,7 @@ document.addEventListener("DOMContentLoaded", function() {
     // 点击下拉框切换显示
     dropdownSelected.addEventListener('click', (e) => {
       e.stopPropagation();  // 防止点击下拉框时事件冒泡到文档上，关闭其他下拉框
-      dropdown.classList.toggle('open');
+      dropdown.classList.toggle('open');  // 切换当前下拉菜单的显示状态
     });
 
     // 选择选项
