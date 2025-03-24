@@ -1,3 +1,4 @@
+/* 通用設置 */
 body {
     font-family: Arial, sans-serif;
     margin: 0;
@@ -17,12 +18,59 @@ main {
     min-height: 100vh;
 }
 
+/* 左側篩選區域 */
 .left-side {
     width: 25%;
     padding: 10px;
 }
 
+/* 右側卡牌展示區 */
 .right-side {
     width: 75%;
     padding: 10px;
+}
+
+/* 下拉選單容器 */
+.dropdown {
+  position: relative;
+  margin-bottom: 20px;
+}
+
+/* 下拉選單選擇框 */
+.dropdown-selected {
+  padding: 10px;
+  border: 1px solid #ccc;
+  cursor: pointer;
+  background-color: #f9f9f9;
+  text-align: left;
+}
+
+/* 下拉選單項目 */
+.dropdown-menu {
+  position: absolute;
+  top: 100%;
+  left: 0;
+  right: 0;
+  display: none;
+  list-style-type: none;
+  margin: 0;
+  padding: 0;
+  border: 1px solid #ccc;
+  background-color: white;
+  z-index: 10;
+}
+
+/* 單個選項樣式 */
+.dropdown-menu li {
+  padding: 10px;
+  cursor: pointer;
+}
+
+.dropdown-menu li:hover {
+  background-color: #f0f0f0;
+}
+
+/* 顯示下拉選單 */
+.dropdown.open .dropdown-menu {
+  display: block;
 }
