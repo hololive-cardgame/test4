@@ -1,1 +1,60 @@
+body {
+    font-family: Arial, sans-serif;
+    margin: 0;
+    padding: 0;
+}
 
+header, footer {
+    background-color: #333;
+    color: white;
+    text-align: center;
+    padding: 10px 0;
+}
+
+main {
+    display: flex;
+    padding: 20px;
+    min-height: 100vh;
+}
+
+.left-side {
+    width: 25%;
+    padding: 10px;
+}
+
+#filter-form {
+    position: relative;
+}
+
+
+/* 自定义下拉菜单 */
+#keyword {
+    display: none;
+    position: absolute;
+    top: 100%;
+    left: 0;
+    width: 100%;
+    max-height: 150px;  /* 设置最大高度 */
+    overflow-y: auto;   /* 使得超出部分显示滚动条 */
+    background-color: white;
+    border: 1px solid #ccc;
+    border-radius: 4px;
+    list-style: none;
+    margin: 0;
+    padding: 0;
+}
+
+/* 菜单项样式 */
+#keyword li {
+    padding: 10px;
+    cursor: pointer;
+}
+
+#keyword li:hover {
+    background-color: #f1f1f1;
+}
+
+/* 打开下拉菜单 */
+.dropdown.open #keyword {
+    display: block;
+}
