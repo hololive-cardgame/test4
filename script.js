@@ -48,21 +48,8 @@ function generateFilterOptions() {
             const li = document.createElement("li");
             li.textContent = keyword;
             // li.classList.add("dropdown-item");
-            li.addEventListener("click", () => {
-                document.getElementById("dropdown-selected-keyword").textContent = keyword;
-                filterCards();
-                closeAllDropdowns();
-            });
             keywordMenu.appendChild(li);
         }
-    });
-}
-
-// 關閉所有下拉選單
-function closeAllDropdowns() {
-    const dropdowns = document.querySelectorAll('.dropdown');
-    dropdowns.forEach(dropdown => {
-        dropdown.classList.remove('open');  // 隱藏下拉選單
     });
 }
 
@@ -76,15 +63,20 @@ dropdowns.forEach(dropdown => {
     // 點擊下拉選單顯示框
     dropdownSelected.addEventListener('click', (e) => {
         e.stopPropagation();
-        closeAllDropdowns();
-        dropdown.classList.toggle('open');  // 切換當前下拉選單的開關狀態
+
+        if (dropdown.classList.contains('open')) {
+            dropdown.classList.remove('open');
+        } else {
+            closeAllDropdowns();
+            dropdown.classList.add('open');
+        }
     });
 
-    // 點擊選項後更新顯示區域並關閉選單
+    // 點擊選項後更新顯示框並關閉下拉選單
     menuItems.forEach(item => {
         item.addEventListener('click', () => {
             dropdownSelected.textContent = item.textContent;  // 更新顯示的選項
-            dropdown.classList.remove('open');  // 隱藏選單
+            closeAllDropdowns();
         });
     });
 });
@@ -92,6 +84,14 @@ dropdowns.forEach(dropdown => {
 // 點擊其他地方關閉所有下拉選單
 document.addEventListener('click', (e) => {
     if (!e.target.closest('.dropdown')) {  // 如果點擊的不是下拉選單區域
-        closeAllDropdowns();  // 關閉所有下拉選單
+        closeAllDropdowns();
     }
 });
+
+// 關閉所有下拉選單
+function closeAllDropdowns() {
+    const dropdowns = document.querySelectorAll('.dropdown');
+    dropdowns.forEach(dropdown => {
+        dropdown.classList.remove('open');  // 隱藏下拉選單
+    });
+}
