@@ -84,6 +84,22 @@ function generateFilterOptions() {
         dropdownSelected.textContent = "全部";  // 設為顯示「全部」
         closeAllDropdowns();
     });
+
+    // 清空屬性、多選框
+    const attributeSelect = document.getElementById("attribute");  // 屬性
+    attributeSelect.innerHTML = "";
+    attributes.forEach(attr => {
+        if (attr) {
+            const label = document.createElement("label");
+            const checkbox = document.createElement("input");
+            checkbox.type = "checkbox";
+            checkbox.value = attr;
+            checkbox.name = "attribute";
+            label.appendChild(checkbox);
+            label.appendChild(document.createTextNode(attr));
+            attributeSelect.appendChild(label);
+        }
+    });
 }
 
 // 設置下拉選單點擊事件
