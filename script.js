@@ -1,5 +1,7 @@
 document.addEventListener("DOMContentLoaded", function() {
   // 遍历所有下拉菜单，处理每一个下拉菜单的点击事件
+
+  const dropdowns = document.querySelectorAll('.dropdown');
   dropdowns.forEach(dropdown => {
     const dropdownSelected = dropdown.querySelector('.dropdown-selected');
     const dropdownMenu = dropdown.querySelector('.dropdown-menu');
