@@ -1,9 +1,4 @@
 // 取得所有的篩選選單元素
-const dropdowns = document.querySelectorAll('.dropdown');  // 所有下拉選單
-const dropdownSelected = dropdown.querySelector('.dropdown-selected');  // 下拉選單顯示框
-const dropdownMenu = dropdown.querySelector('.dropdown-menu');  // 下拉選單列表
-const menuItems = dropdownMenu.querySelectorAll('li');  // 選項
-
 const keywordMenu = document.getElementById("dropdown-menu-keyword");  // 關鍵字下拉選單列表
 
 // 使用 fetch 從 JSON 檔案載入資料
@@ -65,8 +60,12 @@ function generateFilterOptions() {
 }
 
 // 設置下拉選單點擊事件
+const dropdowns = document.querySelectorAll('.dropdown');  // 所有下拉選單
 // 監聽所有下拉選單
 dropdowns.forEach(dropdown => {
+    const dropdownSelected = dropdown.querySelector('.dropdown-selected');  // 下拉選單顯示框
+    const dropdownMenu = dropdown.querySelector('.dropdown-menu');  // 下拉選單列表
+    const menuItems = dropdownMenu.querySelectorAll('li');  // 選項
     // 點擊下拉選單顯示框
     dropdownSelected.addEventListener('click', (e) => {
         e.stopPropagation();
