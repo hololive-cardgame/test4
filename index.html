@@ -1,1 +1,35 @@
+<!DOCTYPE html>
+<html lang="zh">
+  <head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>卡牌查詢網站</title>
+    <!-- 標籤頁小圖示 -->
+    <link rel="icon" href="icon.png" type="image/png">
+    <!-- 載入css -->
+    <link rel="stylesheet" href="style.css">
+  </head>
 
+  <body>
+    <header>
+      <h1>卡牌查詢</h1>
+    </header>
+
+    <main>
+      <div class="left-side">
+        <!-- 篩選條件 -->
+        <form id="filter-form">
+          <label for="keyword">關鍵字</label>
+          <div class="dropdown">
+            <ul id="keyword" name="keyword">
+              <!-- 下拉選單選項會從 JSON 動態加載 -->
+            </ul>
+            <span id="clear-keyword" class="clear-button" style="display: none;">×</span>
+          </div>
+        </form>
+      </div>
+      <div class="right-side">
+      </div>
+    </main>
+  </body>
+</html>
