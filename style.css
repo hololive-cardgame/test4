@@ -76,3 +76,10 @@ main {
 .dropdown.open .dropdown-menu {
   display: block;
 }
+
+/* 去除子選單中的點符號 */
+.sub-menu {
+    list-style-type: none;  /* 移除點符號 */
+    margin: 0;
+    padding: 0;
+}
