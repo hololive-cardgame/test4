@@ -1,5 +1,10 @@
 // 取得所有的篩選選單元素
-const keywordMenu = document.getElementById("dropdown-menu-keyword");
+const dropdowns = document.querySelectorAll('.dropdown');  // 所有下拉選單
+const dropdownSelected = dropdown.querySelector('.dropdown-selected');  // 下拉選單顯示框
+const dropdownMenu = dropdown.querySelector('.dropdown-menu');  // 下拉選單列表
+const menuItems = dropdownMenu.querySelectorAll('li');  // 選項
+
+const keywordMenu = document.getElementById("dropdown-menu-keyword");  // 關鍵字下拉選單列表
 
 // 使用 fetch 從 JSON 檔案載入資料
 fetch("cards.json")
@@ -56,4 +61,32 @@ keywords.forEach(keyword => {
         });
         keywordMenu.appendChild(li);
     }
+});
+
+// 設置下拉選單點擊事件
+// 監聽所有下拉選單
+dropdowns.forEach(dropdown => {
+    // 點擊下拉選單顯示框
+    dropdownSelected.addEventListener('click', (e) => {
+        e.stopPropagation();
+        dropdown.classList.toggle('open');  // 切換開啟或關閉下拉選單
+    });
+
+    // 點擊選項後更新顯示區域並關閉選單
+    menuItems.forEach(item => {
+        item.addEventListener('click', () => {
+            dropdownSelected.textContent = item.textContent;  // 更新顯示的選項
+            dropdown.classList.remove('open');  // 隱藏選單
+        });
+    });
+});
+
+// 點擊其他地方關閉所有下拉選單
+document.addEventListener('click', (e) => {
+    dropdowns.forEach(dropdown => {
+    // 如果點擊的不是下拉選單或其子元素，則關閉下拉選單
+        if (!dropdown.contains(e.target)) {
+            dropdown.classList.remove('open');
+        }
+    });
 });
