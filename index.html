@@ -11,9 +11,7 @@
   </head>
 
   <body>
-    <header>
-      <h1>卡牌查詢</h1>
-    </header>
+    <header>卡牌查詢</header>
 
     <main>
       <div class="left-side">
@@ -21,16 +19,39 @@
         <form id="filter-form">
           <label for="keyword">關鍵字</label>
           <div class="dropdown">
-            <div class="dropdown-selected" id="dropdown-selected"></div>
-            <ul id="keyword" name="keyword">
-              <!-- 下拉選單選項會從 JSON 動態加載 -->
-            </ul>
-            <span id="clear-keyword" class="clear-button" style="display: none;">×</span>
+            <div class="dropdown-selected" id="dropdown-selected-keyword">
+              <!-- 預設空值 -->
+              <ul class="dropdown-menu" id="dropdown-menu-keyword">
+                <!-- 下拉選單選項會從 JSON 動態加載 -->
+              </ul>
+            </div>
+          </div>
+
+          <label for="type">類型</label>
+          <div class="dropdown">
+            <div class="dropdown-selected" id="dropdown-selected-type">
+              全部
+              <ul class="dropdown-menu" id="dropdown-menu-type">
+                <!-- 下拉選單選項會從 JSON 動態加載 -->
+              </ul>
+            </div>
           </div>
         </form>
       </div>
+      
       <div class="right-side">
+        <!-- 卡牌展示區 -->
+        <div id="card-container">
+          <!-- 卡牌會在這裡動態加載 -->
+        </div>
       </div>
     </main>
+
+    <footer>
+      <p>© 2025 卡牌查詢網站</p>
+    </footer>
+
+    <!-- 載入js -->
+    <script src="script.js"></script>
   </body>
 </html>
