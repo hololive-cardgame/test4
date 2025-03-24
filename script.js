@@ -68,6 +68,7 @@ function generateFilterOptions() {
 
     // 點擊「全部」選項後的操作
     allOption.addEventListener("click", () => {
+        const dropdownSelected = document.getElementById("dropdown-selected-type");
         dropdownSelected.textContent = "全部";  // 設為顯示「全部」
         closeAllDropdowns();
     });
