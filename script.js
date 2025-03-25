@@ -188,6 +188,7 @@ clearFiltersBtn.addEventListener("click", () => {
     }
 });
 
+document.addEventListener('DOMContentLoaded', () => {
 // 設置下拉選單點擊事件
 const dropdowns = document.querySelectorAll('.dropdown');  // 所有下拉選單
 dropdowns.forEach(dropdown => {
@@ -235,3 +236,4 @@ function closeAllDropdowns() {
         dropdown.classList.remove('open');  // 隱藏下拉選單
     });
 }
+});
