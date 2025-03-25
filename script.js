@@ -221,6 +221,7 @@ dropdowns.forEach(dropdown => {
         dropdownSelected.textContent = "";
         arrow.textContent = "▼";
         clearButton.style.display = "none";
+        dropdownSelected.classList.remove("has-selection");
         closeAllDropdowns();
     });
 });
