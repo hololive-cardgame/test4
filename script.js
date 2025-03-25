@@ -178,6 +178,9 @@ clearFiltersBtn.addEventListener("click", () => {
         document.getElementById("dropdown-selected-tag").textContent = "";  // 清除標籤
         document.getElementById("dropdown-selected-set").textContent = "";  // 清除卡包
 
+        const arrow = dropdown.querySelector('.dropdown-arrow');  // 下拉選單箭頭
+        arrow.textContent = "▼";
+
         displayCards(cardsData);  // 顯示所有卡牌
     }
 });
@@ -210,6 +213,7 @@ dropdowns.forEach(dropdown => {
         item.addEventListener('click', () => {
             dropdownSelected.textContent = item.textContent;  // 更新顯示的選項
             closeAllDropdowns();
+            arrow.textContent = "▼";
         });
     });
 });
