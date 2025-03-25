@@ -188,6 +188,9 @@ dropdowns.forEach(dropdown => {
     const dropdownSelected = dropdown.querySelector('.dropdown-selected');  // 下拉選單顯示框
     const dropdownMenu = dropdown.querySelector('.dropdown-menu');  // 下拉選單列表
     const menuItems = dropdownMenu.querySelectorAll('li');  // 選項
+
+    const arrow = dropdownSelected.querySelector('.dropdown-arrow');  // 下拉選單箭頭
+    const clearButton = dropdownSelected.querySelector('.clear-button');  // 下拉選單關閉按鈕
     
     // 點擊下拉選單顯示框
     dropdownSelected.addEventListener('click', (e) => {
@@ -195,9 +198,11 @@ dropdowns.forEach(dropdown => {
 
         if (dropdown.classList.contains('open')) {
             dropdown.classList.remove('open');
+            arrow.textContent = "▼";
         } else {
             closeAllDropdowns();
             dropdown.classList.add('open');
+            arrow.textContent = "▲";
         }
     });
 
@@ -206,7 +211,17 @@ dropdowns.forEach(dropdown => {
         item.addEventListener('click', () => {
             dropdownSelected.textContent = item.textContent;  // 更新顯示的選項
             closeAllDropdowns();
+            arrow.textContent = "▼";
+            clearButton.style.display = "inline";
         });
+    });
+
+    // 點擊下拉選單關閉按鈕
+    clearButton.addEventListener("click", () => {
+        dropdownSelected.textContent = "";
+        arrow.textContent = "▼";
+        clearButton.style.display = "none";
+        closeAllDropdowns();
     });
 });
 
@@ -222,5 +237,7 @@ function closeAllDropdowns() {
     const dropdowns = document.querySelectorAll('.dropdown');
     dropdowns.forEach(dropdown => {
         dropdown.classList.remove('open');  // 隱藏下拉選單
+        const arrow = dropdown.querySelector('.dropdown-arrow');
+        arrow.textContent = "▼";
     });
 }
