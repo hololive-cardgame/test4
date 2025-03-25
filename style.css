@@ -92,29 +92,3 @@ main {
     background-color: #da7e7e;
     color: #7eda9c;
 }
-
-/* 清除按鈕和箭頭 */
-.dropdown-arrow, .clear-button {
-    cursor: pointer;
-    font-size: 16px;
-    margin-left: 5px;
-}
-
-/* 設置清除按鈕只顯示於有選擇時 */
-.clear-button {
-    display: none;  /* 初始時隱藏 */
-}
-
-/* 在下拉選單顯示時隱藏箭頭 */
-.dropdown.open .dropdown-arrow {
-    display: none;  /* 下拉選單打開時，隱藏向下箭頭 */
-}
-
-/* 在選擇了某個項目後顯示向下箭頭和清除按鈕 */
-.dropdown-selected.has-selection .dropdown-arrow {
-    display: inline-block;  /* 顯示向下箭頭 */
-}
-
-.dropdown-selected.has-selection .clear-button {
-    display: inline-block;  /* 顯示清除按鈕 */
-}
