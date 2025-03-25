@@ -226,7 +226,5 @@ function closeAllDropdowns() {
     const dropdowns = document.querySelectorAll('.dropdown');
     dropdowns.forEach(dropdown => {
         dropdown.classList.remove('open');  // 隱藏下拉選單
-        const arrow = dropdown.querySelector('.dropdown-arrow');
-        arrow.textContent = "▼";
     });
 }
