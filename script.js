@@ -210,7 +210,6 @@ dropdowns.forEach(dropdown => {
         item.addEventListener('click', () => {
             dropdownSelected.textContent = item.textContent;  // 更新顯示的選項
             closeAllDropdowns();
-            arrow.textContent = "▼";
         });
     });
 });
