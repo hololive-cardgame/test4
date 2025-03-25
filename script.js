@@ -208,12 +208,6 @@ dropdowns.forEach(dropdown => {
             closeAllDropdowns();
         });
     });
-
-    // 點擊下拉選單關閉按鈕
-    clearButton.addEventListener("click", () => {
-        dropdownSelected.textContent = "";
-        closeAllDropdowns();
-    });
 });
 
 // 點擊其他地方關閉所有下拉選單
