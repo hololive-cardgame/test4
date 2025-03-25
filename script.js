@@ -158,6 +158,30 @@ function generateFilterOptions() {
     });
 }
 
+// 清除篩選條件按鈕
+const clearFiltersBtn = document.getElementById("clear-filters");  // 清除篩選條件按鈕
+
+clearFiltersBtn.addEventListener("click", () => {
+    // 檢查是否有任何篩選條件被選擇
+    const isAnyFilterSelected = document.getElementById("dropdown-selected-keyword").textContent !== "" ||
+                                document.getElementById("dropdown-selected-type").textContent !== "全部" ||
+                                Array.from(document.querySelectorAll('input[name="attribute"]')).some(checkbox => checkbox.checked) ||
+                                document.getElementById("dropdown-selected-tag").textContent !== "" ||
+                                document.getElementById("dropdown-selected-set").textContent !== "";
+
+    if (isAnyFilterSelected) {
+        document.getElementById("dropdown-selected-keyword").textContent = "";  // 清除關鍵字
+        document.getElementById("dropdown-selected-type").textContent = "全部";  // 恢復預設值
+        document.querySelectorAll('input[name="attribute"]').forEach(checkbox => {  // 清除屬性框
+            checkbox.checked = false;  // 取消選中所有 checkbox
+        });
+        document.getElementById("dropdown-selected-tag").textContent = "";  // 清除標籤
+        document.getElementById("dropdown-selected-set").textContent = "";  // 清除卡包
+
+        displayCards(cardsData);  // 顯示所有卡牌
+    }
+});
+
 // 設置下拉選單點擊事件
 const dropdowns = document.querySelectorAll('.dropdown');  // 所有下拉選單
 dropdowns.forEach(dropdown => {
