@@ -188,9 +188,6 @@ dropdowns.forEach(dropdown => {
     const dropdownSelected = dropdown.querySelector('.dropdown-selected');  // 下拉選單顯示框
     const dropdownMenu = dropdown.querySelector('.dropdown-menu');  // 下拉選單列表
     const menuItems = dropdownMenu.querySelectorAll('li');  // 選項
-
-    const arrow = dropdownSelected.querySelector('.dropdown-arrow');  // 下拉選單箭頭
-    const clearButton = dropdownSelected.querySelector('.clear-button');  // 下拉選單關閉按鈕
     
     // 點擊下拉選單顯示框
     dropdownSelected.addEventListener('click', (e) => {
@@ -198,11 +195,9 @@ dropdowns.forEach(dropdown => {
 
         if (dropdown.classList.contains('open')) {
             dropdown.classList.remove('open');
-            arrow.textContent = "▼";
         } else {
             closeAllDropdowns();
             dropdown.classList.add('open');
-            arrow.textContent = "▲";
         }
     });
 
