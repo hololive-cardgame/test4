@@ -1,94 +1,360 @@
-/* 通用設置 */
+/* 基本樣式設置 */
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+/* 頁面根布局 */
+html, body {
+  height: 100%;
+  margin: 0;
+  font-family: Arial, sans-serif;
+  display: flex;
+  flex-direction: column;
+}
+
+/* 頁面主體 */
 body {
-    font-family: Arial, sans-serif;
-    margin: 0;
-    padding: 0;
+  flex-grow: 1; /* 使主體部分可以填充剩餘空間 */
+  display: flex;
+  flex-direction: column;
 }
 
-header, footer {
-    background-color: #333;
-    color: white;
-    text-align: center;
-    padding: 10px 0;
+/* Header隱藏和顯示的過渡效果 */
+header {
+  height: 64px;
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  background-color: #aa79a8; /* 背景顏色 */
+  color: white; /* 文字顏色 */
+  padding: 20px;
+  display: flex;
+  align-items: center;
+  z-index: 10; /* 確保header在最上層 */
+  transition: transform 0.3s ease-in-out; /* 設置過渡效果 */
 }
 
+header.hidden {
+  transform: translateY(-100%); /* 隱藏header，將其往上移動 */
+}
+
+header h1 {
+  font-size: 1.25rem; /* 字體大小 */
+  margin-left: 20px; /* 靠左對齊，並加上邊距 */
+}
+
+/* 頁面主體布局 */
 main {
-    display: flex;
-    padding: 20px;
-    min-height: 100vh;
+  display: flex;
+  flex-direction: row;
+  justify-content: flex-start;
+  align-items: flex-start;
+  gap: 20px;
+  padding: 20px;
+  padding-top: 90px;
+  box-sizing: border-box;
+  flex-grow: 1; /* 保證main部分能夠佔滿剩餘空間 */
+  min-height: 100vh;
 }
 
-/* 左側篩選區域 */
-.left-side {
-    width: 25%;
-    padding: 10px;
+/* Left Panel: 關鍵字篩選區 */
+.left-panel {
+  padding: 20px;
+  background-color: #fff;
+  width: 480px;
+  border: 1px solid rgba(0,0,0,.23);
+}
+
+/* 標籤樣式 */
+.left-panel label {
+  font-size: 16px;
+  margin-bottom: 8px;
+  display: block;
+}
+
+/* Select 下拉選單樣式 */
+.select-container {
+  position: relative;
+}
+
+select#keywordSelect {
+  width: 100%;
+  padding: 8px 40px 8px 10px; /* 右側預留空間放清除按鈕 */
+  border: 1px solid #ccc;
+  border-radius: 4px;
+  font-size: 14px;
+  background-color: #fff;
+  appearance: none; /* 去除瀏覽器預設樣式 */
+}
+
+select#keywordSelect:focus {
+  border-color: #007bff;
+  outline: none;
+}
+
+/* 清除按鈕樣式 */
+.clear-btn {
+  position: absolute;
+  right: 10px;
+  top: 50%;
+  transform: translateY(-50%);
+  font-size: 18px;
+  background: transparent;
+  border: none;
+  cursor: pointer;
+  color: #aaa;
+  display: none;  /* 預設隱藏 */
+}
+
+.clear-btn:hover {
+  color: #f00;
 }
 
 /* 右側卡牌展示區 */
-.right-side {
-    width: 75%;
-    padding: 10px;
+.right-panel {
+  flex-grow: 1; /* 填充剩餘空間 */
+  display: grid;
+  grid-template-columns: repeat(5, 1fr); /* 默認每行5張卡片 */
+  gap: 20px;
+  padding: 20px;
+  box-sizing: border-box;
 }
 
-/* 下拉選單容器 */
-.dropdown {
-    position: relative;
-    margin-bottom: 20px;
+/* 卡牌樣式 */
+.card {
+  width: 100%;
+  aspect-ratio: 3 / 4; /* 設置寬高比 */
+  background-color: #fff;
+  border-radius: 10px;
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+  cursor: pointer;
+  transition: transform 0.3s;
 }
 
-/* 下拉選單選擇框 */
-.dropdown-selected {
-    padding: 10px;
-    border: 1px solid #ccc;
-    cursor: pointer;
-    background-color: #f9f9f9;
-    text-align: left;
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
+.card img {
+  width: 100%;
+  height: 100%;
+  object-fit: contain;
+  border-radius: 10px;
 }
 
-/* 下拉選單項目 */
-.dropdown-menu {
-    position: absolute;
-    top: 100%;
-    left: 0;
-    right: 0;
-    display: none;
-    list-style-type: none;
-    max-height: 150px;  /* 设置最大高度 */
-    overflow-y: auto;
-    margin: 0;
-    padding: 0;
-    border: 1px solid #ccc;
-    background-color: white;
-    z-index: 10;
+.card:hover {
+  transform: translateY(-10px); /* 浮起效果 */
 }
 
-/* 單個選項樣式 */
-.dropdown-menu li {
-    padding: 10px;
-    cursor: pointer;
+/* 彈窗樣式 */
+.popup {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background-color: rgba(0, 0, 0, 0.5); /* 半透明背景 */
+  display: none; /* 預設隱藏彈窗 */
+  justify-content: center;
+  align-items: center;
+  z-index: 9999;
 }
 
-.dropdown-menu li:hover {
-    background-color: #f0f0f0;
+/* 彈窗內部內容 */
+.popup-content {
+  display: flex;
+  background-color: white;
+  border-radius: 10px;
+  overflow: hidden;
+  width: 80%;
+  max-width: 1500px;
+  position: relative; /* 設定為相對定位，這樣X按鈕就可以相對於這個容器定位 */
 }
 
-/* 顯示下拉選單 */
-.dropdown.open .dropdown-menu {
-    display: block;
+/* 基本樣式，所有的標籤共用 */
+.label {
+  display: inline-block;         /* 讓 span 變為區塊級元素，可以設置寬高 */
+  padding: 0px 20px;             /* 上下和左右的內邊距，控制橢圓形 */
+  background-color: #534B88;     /* 背景色，可以根據需求設置顏色 */
+  border-radius: 20px;           /* 圓角，設置足夠的值來創建橢圓形 */
+  font-weight: normal;           /* 去除粗體，保留原樣 */
+  color: white;                   /* 設置字體顏色 */
+  margin-bottom: 20px;
 }
 
-/* 去除子選單中的點符號 */
-.sub-menu {
-    list-style-type: none;  /* 移除點符號 */
-    margin: 0;
-    padding: 0;
+.label.collab {
+  background-color: #cc101a;     /* 聯動效果標籤 */
 }
 
-/* 設置卡包分類 */
-.category-label {
-    background-color: #da7e7e;
-    color: #7eda9c;
+.label.bloom {
+  background-color: #0076be;     /* 綻放效果標籤 */
+}
+
+.label.gift {
+  background-color: #069039;     /* 天賦效果標籤 */
+}
+
+.label.skill {
+  background-color: #ED798D;     /* 主推技能標籤 */
+}
+
+.label.spSkill, .label.skill1, .label.skill2 {
+  background-image: linear-gradient(110deg, rgb(123, 90, 163), rgb(95, 182, 231) 55%, rgb(229, 51, 122));     /* SP主推技能、藝能標籤 */
+}
+
+.label.rule {
+  background-image: linear-gradient(90deg, rgb(245, 218, 114), rgb(221, 159, 51) 50%, rgb(245, 218, 114));     /* 特殊規則標籤 */
+}
+
+strong {
+  margin-right: 10px;
+}
+
+/* X 按鈕樣式 */
+.close-btn {
+  position: absolute;  /* 使用絕對定位 */
+  top: 9px;           /* 距離頂部9px */
+  right: 10px;         /* 距離右邊10px */
+  font-size: 2rem;
+  color: white;
+  background-color: red;
+  border-radius: 50%;
+  width: 30px;
+  height: 30px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  cursor: pointer;
+}
+
+.close-btn:hover {
+  background-color: darkred;
+}
+
+/* 彈窗內部圖片 */
+.popup-left {
+  flex: 2;
+  padding: 20px;
+  display: flex;
+}
+
+.popup-left img {
+  width: 100%;  /* 讓圖片寬度自動填滿容器 */
+  height: auto; /* 高度根據寬度自動調整 */
+  aspect-ratio: 68 / 95;  /* 設置長寬比為 68:95 */
+}
+
+.popup-right {
+  flex: 3;
+  padding: 20px;
+  line-height: 2;
+}
+
+.popup img {
+  width: 100%;
+  height: auto;
+}
+
+/* 左右箭頭樣式 */
+.arrow-left, .arrow-right {
+  position: absolute;
+  top: 50%;
+  transform: translateY(-50%);
+  font-size: 30px;
+  width: 40px;
+  height: 40px;
+  fill: white;  /* 設定箭頭顏色為白色 */
+  background-color: red;
+  border-radius: 50%;
+  padding: 7px;
+  cursor: pointer;
+  user-select: none;
+}
+.arrow-left:hover, .arrow-right:hover {
+  background-color: darkred;
+}
+
+.arrow-left {
+  left: 10px;  /* 左側箭頭的位置 */
+}
+
+.arrow-right {
+  right: 10px;  /* 右側箭頭的位置 */
+}
+
+/* 分頁按鈕容器 */
+#pagination {
+  display: flex;
+  justify-content: center;  /* 水平居中對齊 */
+  align-items: center;      /* 垂直居中對齊 */
+  position: relative;
+  left: 0;                  /* 從左邊開始 */
+  right: 0;                 /* 到右邊結束 */
+  bottom: 20px;             /* 距離頁面底部20px，可以根據需要調整 */
+  z-index: 1000;            /* 確保它不被其他內容覆蓋 */
+  margin-top: 65px;         /* 在卡牌展示區與分頁按鈕之間留出間距 */
+  margin-bottom: 20px;      /* 在footer與分頁按鈕之間留出間距 */
+}
+
+/* 每個分頁按鈕 */
+#pagination button {
+  padding: 10px 15px;
+  margin: 0 3px;  /* 按鈕間的距離 */
+  cursor: pointer;
+  background-color: #f0f0f0;
+  border: 1px solid #ccc;
+  border-radius: 50%;
+}
+
+#pagination button:hover {
+  background-color: #ddd;
+}
+
+/* 當前頁的按鈕樣式 */
+#pagination .active {
+  background-color: #cc101a;  /* 當前頁的顏色 */
+  font-weight: bold;
+}
+
+/* 禁用的按鈕樣式 */
+#pagination button:disabled {
+  background-color: #ccc;
+  cursor: not-allowed;
+}
+
+/* footer始终在頁面底部 */
+footer {
+  padding: 20px;
+  background-color: #333;
+  color: #fff;
+  text-align: center;
+  font-size: 14px;
+  width: 100%;
+  margin-top: auto; /* 保證footer在頁面底部 */
+}
+
+/* 設定Footer文字間距 */
+footer p {
+  margin: 5px 0;
+}
+
+/* RWD響應式設計 */
+/* 當螢幕寬度小於1024px時，每行顯示3張卡片 */
+@media (max-width: 1024px) {
+  .right-panel {
+    grid-template-columns: repeat(3, 1fr); /* 每行顯示 3 張 */
+  }
+}
+
+/* 當螢幕寬度小於768px時，每行顯示2張卡片 */
+@media (max-width: 768px) {
+  .right-panel {
+    grid-template-columns: repeat(2, 1fr); /* 每行顯示 2 張 */
+  }
+}
+
+/* 當螢幕寬度小於480px時，每行顯示1張卡片 */
+@media (max-width: 480px) {
+  .right-panel {
+    grid-template-columns: 1fr; /* 每行顯示 1 張 */
+  }
 }
