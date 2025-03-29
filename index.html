@@ -1,130 +1,149 @@
 <!DOCTYPE html>
 <html lang="zh">
-<head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>hololive卡牌遊戲資料庫</title>
-  <link rel="icon" href="images/icon.png" type="image/png">
-  <link rel="stylesheet" href="styles.css">
-</head>
-<body>
-  <!-- header -->
-  <header>
-    <h1>hololive卡牌查詢</h1>
-  </header>
+  <head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>hololive卡牌資料庫</title>
+    <!-- 標籤頁小圖示 -->
+    <link rel="icon" href="icon.png" type="image/png">
+    <!-- 載入css -->
+    <link rel="stylesheet" href="style.css">
+    <link href="https://cdn.jsdelivr.net/npm/select2@4.0.13/dist/css/select2.min.css" rel="stylesheet" />
+  </head>
 
-  <!-- main -->
-  <main>
-  <div class="left-panel">
-    <label for="keywordSelect">關鍵字</label>
-    <div class="select-container">
-      <select id="keywordSelect">
-        <!-- 預設選項為空，不顯示任何提示文字 -->
-        <!-- <option value="" disabled selected></option>  預設留空 -->
-        <!-- 下拉選項會通過 JavaScript 動態填充 -->
-      </select>
-      <button id="clearKeywordBtn" class="clear-btn" style="display:none;">&times;</button> <!-- 清除按鈕 -->
-    </div>
-  </div>
-  <div class="right-panel" id="cardContainer">
-    <!-- 卡牌展示區 -->
-  </div>
-</main>
+  <body>
+    <header>
+      <h1>hololive卡牌查詢</h1>
+    </header>
 
-  <!-- 分頁按鈕 -->
-  <div id="pagination">
-    <!-- 分頁按鈕會動態生成 -->
-  </div>
+    <main>
+      <div class="left-side">
+        <!-- 篩選條件 -->
+        <form id="filterForm">
+          <div class="filter-container">
+            <label for="keyword">關鍵字</label>
+            <select id="keyword" name="keyword">
+              <!-- 下拉選單選項會從 JSON 動態加載 -->
+            </select>
+            <span id="clearKeyword" class="clear-button" style="display: none;">
+              <svg class="MuiSvgIcon-root MuiSvgIcon-fontSizeSmall css-1k33q06" focusable="false" aria-hidden="true" viewBox="0 0 24 24" data-testid="CloseIcon">
+                <path d="M19 6.41L17.59 5 12 10.59 6.41 5 5 6.41 10.59 12 5 17.59 6.41 19 12 13.41 17.59 19 19 17.59 13.41 12z"></path>
+              </svg>
+            </span>
+          </div>
 
-  <!-- 彈窗 -->
-  <div class="popup" id="popup">
-    <div class="popup-content">
-      <div class="popup-left">
-        <img id="popupImage" src="" alt="卡牌圖片">
+          <div class="filter-container">
+            <label for="type">類型</label>
+            <select id="type" name="type">
+              <!-- 下拉選單選項會從 JSON 動態加載 -->
+            </select>
+          </div>
+
+          <div class="filter-container">
+            <label for="attribute">屬性</label>
+              <select id="attribute" name="attribute" multiple="multiple">
+                <!-- 下拉選單選項會從 JSON 動態加載 -->
+              </select>
+          </div>
+
+          <div class="filter-container">
+            <label for="bloom">綻放等級</label>
+            <select id="bloom" name="bloom">
+              <!-- 下拉選單選項會從 JSON 動態加載 -->
+            </select>
+            <span id="clearBloom" class="clear-button" style="display: none;">
+              <svg class="MuiSvgIcon-root MuiSvgIcon-fontSizeSmall css-1k33q06" focusable="false" aria-hidden="true" viewBox="0 0 24 24" data-testid="CloseIcon">
+                <path d="M19 6.41L17.59 5 12 10.59 6.41 5 5 6.41 10.59 12 5 17.59 6.41 19 12 13.41 17.59 19 19 17.59 13.41 12z"></path>
+              </svg>
+            </span>
+          </div>
+
+          <div class="filter-container">
+            <label for="tag">標籤</label>
+            <select id="tag" name="tag">
+              <!-- 下拉選單選項會從 JSON 動態加載 -->
+            </select>
+            <span id="clearTag" class="clear-button" style="display: none;">
+              <svg class="MuiSvgIcon-root MuiSvgIcon-fontSizeSmall css-1k33q06" focusable="false" aria-hidden="true" viewBox="0 0 24 24" data-testid="CloseIcon">
+                <path d="M19 6.41L17.59 5 12 10.59 6.41 5 5 6.41 10.59 12 5 17.59 6.41 19 12 13.41 17.59 19 19 17.59 13.41 12z"></path>
+              </svg>
+            </span>
+          </div>
+
+          <div class="filter-container">
+            <label for="set">卡包</label>
+            <select id="set" name="set">
+              <option value="" disabled selected></option>
+              <!-- 下拉選單選項會從 JSON 動態加載 -->
+            </select>
+            <span id="clearSet" class="clear-button" style="display: none;">
+              <svg class="MuiSvgIcon-root MuiSvgIcon-fontSizeSmall css-1k33q06" focusable="false" aria-hidden="true" viewBox="0 0 24 24" data-testid="CloseIcon">
+                <path d="M19 6.41L17.59 5 12 10.59 6.41 5 5 6.41 10.59 12 5 17.59 6.41 19 12 13.41 17.59 19 19 17.59 13.41 12z"></path>
+              </svg>
+            </span>
+          </div>
+
+          <!-- 清除篩選條件 -->
+          <div id="clearFilters">清除篩選條件</div>
+        </form>
       </div>
-      <div class="popup-right">
-        <h2 id="popupName">卡牌名稱</h2>
 
-        <!-- 顯示 oshi 類型卡牌的區域 -->
-        <div id="popupOshiType" class="popup-card-type" style="display: none;">
-          <p><strong><span class="label">屬性</span></strong><span id="popupOshiAttribute">無</span></p>
-          <p><strong><span class="label">生命值</span></strong><span id="popupLife">無</span></p>
-          <p><strong><span class="label skill">主推技能</span></strong><span id="popupSkill">無</span></p>
-          <p><strong><span class="label spSkill">SP主推技能</span></strong><span id="popupspSkill">無</span></p>
-          <p><strong><span class="label">卡牌編號</span></strong><span id="popupOshiId">無</span></p>
+      <div class="right-side">
+        <!-- 卡牌展示區 -->
+        <div id="cardContainer">
+          <!-- 卡牌會在這裡動態加載 -->
+        </div>
+      </div>
+    </main>
+
+    <!-- 分頁按鈕 -->
+    <div id="pagination">
+      <!-- 分頁按鈕會動態生成 -->
+    </div>
+
+    <!-- 卡牌彈窗 -->
+    <div class="popup" id="popup">
+      <div class="popup-content">
+        <!-- 左側顯示圖片 -->
+        <div class="popup-left" id="popupLeft">
+          <img id="popupImage" src="" alt="卡牌圖片">
         </div>
 
-        <!-- 顯示 holomen 類型卡牌的區域 -->
-        <div id="popupHolomenType" class="popup-card-type" style="display: none;">
-          <p><strong><span class="label">標籤</span></strong><span id="popupTag">無</span></p>
-          <p><strong><span class="label">綻放等級</span></strong><span id="popupBloom">無</span></p>
-          <p><strong><span class="label">屬性</span></strong><span id="popupHolomenAttribute">無</span></p>
-          <p><strong><span class="label">體力</span></strong><span id="popupHP">無</span></p>
-          
-          <!-- 聯動效果 (如果有) -->
-          <p id="popupCollabEffectContainer" style="display: none;">
-            <strong><span class="label collab">效果</span></strong><span id="popupCollabEffect">無</span>
-          </p>
+        <!-- 右側顯示資料 -->
+        <div class="popup-right" id="popupRight">
+          <!-- 資料會從 JavaScript 動態載入 -->
+        </div>
 
-          <!-- 綻放效果 (如果有) -->
-          <p id="popupBloomEffectContainer" style="display: none;">
-            <strong><span class="label bloom">效果</span></strong><span id="popupBloomEffect">無</span>
-          </p>
-
-          <!-- 天賦效果 (如果有) -->
-          <p id="popupGiftEffectContainer" style="display: none;">
-            <strong><span class="label gift">效果</span></strong><span id="popupGiftEffect">無</span>
-          </p>
-          
-          <!-- 第一個技能 (如果有) -->
-          <p id="popupSkill1Container" style="display: none;">
-          <strong><span class="label skill1">藝能</span></strong><span id="popupSkill1">無</span>
-          </p>
-
-          <!-- 第二個技能 (如果有) -->
-          <p id="popupSkill2Container" style="display: none;">
-            <strong><span class="label skill2">藝能</span></strong><span id="popupSkill2">無</span>
-          </p>
-
-          <p><strong><span class="label">交棒</span></strong>
-          <!-- 用來顯示第一張 batonImage -->
-          <img id="popupBatonImage1" src="" alt="Baton Image 1" style="display: none; width: 48%; max-height: 300px; object-fit: contain; margin-right: 4%;"/>
-
-          <!-- 用來顯示第二張 batonImage -->
-          <img id="popupBatonImage2" src="" alt="Baton Image 2" style="display: none; width: 48%; max-height: 300px; object-fit: contain;"/>
-          </p>
-
-          <!-- 特殊規則 (如果有) -->
-          <p id="popupRuleContainer" style="display: none;">
-            <strong><span class="label rule">特殊規則</span></strong><span id="popupRule">無</span>
-          </p>
-          
-          <p><strong><span class="label">卡牌編號</span></strong><span id="popupHolomenId">無</span></p>
-        </div>  
-      </div>
-      <!-- 左右箭頭 -->
-      <div class="arrow-left" id="arrowLeft">
-        <!-- 左箭頭SVG -->
-        <svg class="MuiSvgIcon-root MuiSvgIcon-fontSizeMedium css-vubbuv" focusable="false" aria-hidden="true" viewBox="0 0 24 24" data-testid="ArrowBackIosRoundedIcon">
-          <path d="M16.62 2.99c-.49-.49-1.28-.49-1.77 0L6.54 11.3c-.39.39-.39 1.02 0 1.41l8.31 8.31c.49.49 1.28.49 1.77 0s.49-1.28 0-1.77L9.38 12l7.25-7.25c.48-.48.48-1.28-.01-1.76z"></path>
-        </svg>
-      </div>
-      <div class="arrow-right" id="arrowRight">
-        <!-- 右箭頭SVG -->
-        <svg class="MuiSvgIcon-root MuiSvgIcon-fontSizeMedium css-vubbuv" focusable="false" aria-hidden="true" viewBox="0 0 24 24" data-testid="ArrowForwardIosRoundedIcon">
+        <!-- 彈窗左右切換箭頭 -->
+        <div class="arrow-left" id="arrowLeft">
+          <svg width="24" height="24" class="MuiSvgIcon-root MuiSvgIcon-fontSizeMedium css-vubbuv" focusable="false" aria-hidden="true" viewBox="0 0 24 24" data-testid="ArrowBackIosRoundedIcon">
+           <path d="M16.62 2.99c-.49-.49-1.28-.49-1.77 0L6.54 11.3c-.39.39-.39 1.02 0 1.41l8.31 8.31c.49.49 1.28.49 1.77 0s.49-1.28 0-1.77L9.38 12l7.25-7.25c.48-.48.48-1.28-.01-1.76z"></path>
+         </svg>
+        </div>
+        <div class="arrow-right" id="arrowRight">
+          <svg width="24" height="24" class="MuiSvgIcon-root MuiSvgIcon-fontSizeMedium css-vubbuv" focusable="false" aria-hidden="true" viewBox="0 0 24 24" data-testid="ArrowForwardIosRoundedIcon">
           <path d="M7.38 21.01c.49.49 1.28.49 1.77 0L17.46 12.7c.39-.39.39-1.02 0-1.41l-8.31-8.31c-.49-.49-1.28-.49-1.77 0s-.49 1.28 0 1.77L14.62 12l-7.25 7.25c-.48.48-.48 1.28.01 1.76z"></path>
         </svg>
+        </div>
+
+        <!-- 關閉彈窗 -->
+        <div class="close-popup" id="closePopup">
+          <svg width="24" height="24" class="MuiSvgIcon-root MuiSvgIcon-fontSizeSmall css-1k33q06" focusable="false" aria-hidden="true" viewBox="0 0 24 24" data-testid="CloseIcon">
+              <path d="M19 6.41L17.59 5 12 10.59 6.41 5 5 6.41 10.59 12 5 17.59 6.41 19 12 13.41 17.59 19 19 17.59 13.41 12z"></path>
+            </svg>
+        </div>
       </div>
-      <div class="close-btn" id="closePopup">×</div>
     </div>
-  </div>
 
-  <!-- footer -->
-  <footer>
-    <p>© 2025</p>
-    <p>這是粉絲自製的網站，旨在分享hololive卡牌遊戲資訊，僅供使用者個人使用，本網站所有資訊版權均歸屬 ©COVER Corp. / ホロライブプロダクション / hololive OFFICIAL CARD GAME</p>
-  </footer>
+    <footer>
+      <p>© 2025 卡牌查詢網站</p>
+      <p>這是粉絲自製網站，旨在分享hololive卡牌遊戲資訊，僅供使用者個人使用</p>
+      <p>本網站所有資訊之版權均歸屬 © 2016 COVER Corp. / ホロライブプロダクション / hololive OFFICIAL CARD GAME</p>
+    </footer>
 
-  <script src="script.js"></script>
-</body>
+    <!-- 載入js -->
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/select2@4.0.13/dist/js/select2.min.js"></script>
+    <script src="script.js"></script>
+  </body>
 </html>
