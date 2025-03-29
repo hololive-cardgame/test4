@@ -1,221 +1,316 @@
-const cardsPerPage = 10;  // 設置每頁顯示的卡牌數量
+// 取得所有的篩選選單元素
+const setSelect = document.getElementById("set");  // 卡包
+const clearFiltersBtn = document.getElementById("clearFilters");  // 清除篩選條件按鈕
+const cardContainer = document.getElementById("cardContainer");  // 卡牌展示區
+
+let cardsData = [];  // 所有卡牌資料
+let filteredCards = [];  // 篩選後的卡牌資料
 let currentPage = 0;  // 初始頁面是第一頁
-let filteredCards = []; // 儲存篩選後的卡牌
+const cardsPerPage = 30;  // 設置每頁顯示的卡牌數量
+let currentIndex = -1;  // 當前顯示的卡牌索引
 
-// 讀取卡牌資料的函式
-function loadCards() {
-  fetch('cards.json')  // 假設你的 JSON 檔案放在網站的根目錄下
-    .then(response => response.json())  // 解析JSON資料
-    .then(cards => {
-      // 儲存卡牌資料
-      window.cards = cards;
-      filteredCards = cards;  // 初始情況下顯示所有卡牌
+// 使用 fetch 從 JSON 檔案載入資料
+fetch("cards.json")
+  .then(response => response.json())  // 解析 JSON 資料
+  .then(data => {
+    cardsData = data;
+    filteredCards = data;
 
-      // 顯示當前頁的卡牌
-      displayCards();
+    generateFilterOptions();  // 生成篩選選項
+    displayCards(cardsData);  // 顯示所有卡牌
+  })
+  .catch(error => {
+    console.error("Error loading the card data:", error);
+  });
 
-      // 顯示頁碼
-      updatePagination();
+// 根據 JSON 資料生成篩選選項
+function generateFilterOptions() {
+  const keywords = new Set();
+  const types = new Set();
+  const attributes = new Set();
+  const blooms = new Set();
+  const tags = new Set();
+  const sets = {
+    "起始牌組": new Set(),
+    "補充包": new Set(),
+    "其他": new Set()
+  };
 
-      // 填充關鍵字選單
-      populateKeywordSelect(cards);
-    })
-    .catch(error => {
-      console.error('載入卡牌資料時發生錯誤:', error);
+  // 儲存卡牌名稱的集合
+  cardsData.forEach(card => {
+    keywords.add(card.name);
+    types.add(card.type);
+    if (card.attribute) {
+      card.attribute.split(" / ").forEach(attr => attributes.add(attr));
+    }
+    blooms.add(card.bloom);
+    if (card.tag) {
+        card.tag.split(" / ").forEach(tag => tags.add(tag));
+    }
+    if (card.set) {
+      const cardSets = Array.isArray(card.set) ? card.set : [card.set];
+      cardSets.forEach(setItem => {
+        if (setItem.includes("起始牌組")) {
+          const setName = setItem.replace("起始牌組","").replace(/[「」]/g,"").trim();
+          sets["起始牌組"].add(setName);
+        }else if (setItem.includes("補充包")) {
+          const setName = setItem.replace("補充包","").replace(/[「」]/g,"").trim();
+          sets["補充包"].add(setName);
+        }else if (card.set === "スタートエールセット" || card.set === "PR卡"){
+          sets["其他"].add(setItem);
+        }
+      });
+    }
+  });
+
+  // 填充關鍵字選項
+  keywords.forEach(keyword => {
+    if (keyword) {
+      const option = document.createElement("option");
+      option.value = keyword;
+      option.textContent = keyword;
+      $("#keyword").append(option);
+    }
+  });
+
+  // 初始化類型
+  $("#type").select2({
+    minimumResultsForSearch: Infinity,
+    width: "100%"
+  });
+  // 監聽篩選條件變動，觸發篩選
+  $("#type").on("select2:select", function() {
+    filterCards();
+  });
+  // 填充類型選項
+  const allOption = new Option("全部","allOption");
+  $("#type").append(allOption);
+  types.forEach(type => {
+    if (type) {
+      const option = document.createElement("option");
+      option.value = type;
+      option.textContent = type;
+      $("#type").append(option);
+    }
+  });
+  // 觸發更新
+  $("#type").trigger("change");
+
+  // 填充屬性選項
+  attributes.forEach(attribute => {
+    if (attribute) {
+      const option = document.createElement("option");
+      option.value = attribute;
+      option.textContent = attribute;
+      $("#attribute").append(option);
+    }
+  });
+
+  // 填充綻放等級選項
+  blooms.forEach(bloom => {
+    if (bloom) {
+      const option = document.createElement("option");
+      option.value = bloom;
+      option.textContent = bloom;
+      $("#bloom").append(option);
+    }
+  });
+
+  // 將 Set 轉換為數組，並進行排序
+  const sortedTags = Array.from(tags).sort();
+  // 填充標籤選項
+  sortedTags.forEach(tag => {
+    if (tag) {
+      const option = document.createElement("option");
+      option.value = tag;
+      option.textContent = tag;
+      $("#tag").append(option);
+    }
+  });
+
+  // 卡包排序hSDxx、hBPxx
+  function customSort(arr) {
+    return arr.sort((a, b) => {
+      const extractNumber = (set) => {
+        const match = set.match(/h\w+(\d+)/);
+        if (match) {
+          return parseInt(match[1], 10);  // 返回數字
+        }
+        return Infinity; // 如果沒有匹配到名稱，放到最後面
+      };
+
+      const numberA = extractNumber(a);
+      const numberB = extractNumber(b);
+
+      return numberA - numberB;  // 按數字排序
     });
-}
-
-// 填充關鍵字選單
-function populateKeywordSelect(cards) {
-  const keywordSelect = document.getElementById('keywordSelect');
-  const uniqueNames = [...new Set(cards.map(card => card.name))]; // 取得所有不重複的卡牌名稱
-
-  // 清空下拉選單
-  keywordSelect.innerHTML = '';
-
-  // 填充其他選項
-  uniqueNames.forEach(name => {
-    const option = document.createElement('option');
-    option.value = name;
-    option.textContent = name;
-    keywordSelect.appendChild(option);
-  });
-
-  // 這裡不添加空選項，而是讓 select 元素本身保持預設為空
-  keywordSelect.value = "";  // 預設為空
-
-  // 監聽選擇事件，根據選擇的關鍵字過濾卡牌
-  keywordSelect.addEventListener('change', (e) => {
-    const keyword = e.target.value;
-    filterCards(keyword);
-  });
-}
-
-// 根據關鍵字過濾卡牌
-function filterCards(keyword) {
-  if (keyword === "") {
-    filteredCards = window.cards;  // 如果沒有關鍵字，顯示所有卡牌
-    document.getElementById("clearKeywordBtn").style.display = "none";  // 隱藏清除按鈕
-  } else {
-    filteredCards = window.cards.filter(card => card.name.includes(keyword));  // 根據卡牌名稱過濾
-    document.getElementById("clearKeywordBtn").style.display = "inline-block";  // 顯示清除按鈕
   }
+  // 填充卡包選項
+  Object.keys(sets).forEach(category => {
+    const optgroup = document.createElement("optgroup");
+    optgroup.label = category;  // Set group label
 
-  currentPage = 0;  // 重置頁面為第一頁
-  displayCards();
-  updatePagination();
-}
+    // 添加該分類下的所有卡包選項
+    const sortedSets = customSort(Array.from(sets[category]));
+    sortedSets.forEach(set => {
+      const option = document.createElement("option");
+      option.value = set;
+      option.textContent = set;
+      optgroup.appendChild(option);
+    });
 
-// 顯示當前頁的卡牌
-function displayCards() {
-  const cardsContainer = document.getElementById("cardContainer");
-  cardsContainer.innerHTML = '';  // 清空容器
+    // 把分組添加到 select 元素中
+    setSelect.appendChild(optgroup);
+  });
+  // 設定預設為空值（選單本身保持空）
+  setSelect.value = "";
 
-  // 檢查是否有篩選結果
-  if (filteredCards.length === 0) {
-    const noResultsMessage = document.createElement('p');
-    noResultsMessage.textContent = "沒有符合的資料";
-    noResultsMessage.style.textAlign = "center";  // 可以加一些 CSS 調整顯示樣式
-    noResultsMessage.style.fontSize = "18px";
-    noResultsMessage.style.color = "#cc101a";  // 可以自定義顏色
-    cardsContainer.appendChild(noResultsMessage);
-    return; // 如果沒有結果，就不再顯示卡牌
-  }
+  // 初始化 Select2
+  $(document).ready(function() {
+    let isInitialized = false;  // 確保初始化時不進行篩選
+    
+    // 初始化關鍵字、屬性、綻放等級、標籤、卡包
+    $("#keyword, #attribute, #bloom, #tag, #set").select2({
+      placeholder: "",
+      minimumResultsForSearch: Infinity,
+      width: "100%"
+    });
+    
+    // 設定初始值不觸發
+    function setSelect2ValueWithoutChange(selector, value) {
+      const Select2 = $.fn.select2.amd.require('select2/core');
+      const $element = $(selector);
+      const instance = $element.data('select2');
 
-  // 計算當前頁要顯示的卡牌範圍
-  const startIndex = currentPage * cardsPerPage;
-  const endIndex = startIndex + cardsPerPage;
-  const currentPageCards = filteredCards.slice(startIndex, endIndex);
+      if (instance) {
+        instance.triggerChange = false;  // 禁用觸發
+        $element.val(value).trigger('change');
+        instance.triggerChange = true;  // 重啟觸發
+      } else {
+        $element.val(value).trigger('change', { triggerChange: false });
+      }
+    }
 
-  // 生成卡牌
-  currentPageCards.forEach(card => {
-    const cardElement = document.createElement("div");
-    cardElement.classList.add("card");
-    cardElement.innerHTML = `<img src="${card.image}" alt="${card.name}" />`;
+    // 初始化選項
+    function initializeFilterOptions() {
+      setSelect2ValueWithoutChange("#keyword", "");
+      setSelect2ValueWithoutChange("#bloom", "");
+      setSelect2ValueWithoutChange("#attribute", "");
+      setSelect2ValueWithoutChange("#tag", "");
+      setSelect2ValueWithoutChange("#set", "");
+    }
+    initializeFilterOptions();
 
-    // 點擊卡牌顯示詳細資訊
-    cardElement.addEventListener("click", () => showPopup(card));
+    // 監聽篩選條件變動，觸發篩選
+    $('#attribute').on('change', function() {
+      if (isInitialized) {
+        filterCards();
+      }
+    });
+    $("#keyword, #attribute, #bloom, #tag, #set").on("select2:select", function() {
+      if (isInitialized) filterCards();
+    });
 
-    cardsContainer.appendChild(cardElement);
+    // 監聽 Select2 的變更事件，當選擇框有值時顯示自定義的清除按鈕
+    $("#keyword, #bloom, #tag, #set").on("select2:select", function() {
+      $("#clear" + this.id.charAt(0).toUpperCase() + this.id.slice(1)).show();  // 顯示自定義清除按鈕
+    });
+
+    // 監聽 Select2 的清除事件，當選擇框清除選項時隱藏自定義的清除按鈕
+    $("#keyword, #bloom, #tag, #set").on("select2:clear", function() {
+      $("#clear" + this.id.charAt(0).toUpperCase() + this.id.slice(1)).hide();  // 隱藏自定義清除按鈕
+    });
+
+    // 當自定義的清除按鈕被點擊時，清除選擇框的值並手動關閉下拉選單
+    $("#clearKeyword, #clearBloom, #clearTag, #clearSet").on("click", function() {
+      var target = $(this).attr("id").replace("clear", "").toLowerCase();  // 提取ID
+      $("#" + target).val("").trigger("change").select2("close");  // 清空選擇框的值並觸發更新、手動關閉下拉選單
+      $(this).hide();  // 隱藏清除按鈕
+      filterCards();
+    });
+
+    // 初始化清除按鈕狀態
+    $("#keyword, #bloom, #tag, #set").each(function() {
+      if ($(this).val() === "") {  // 當沒有選擇任何項目時，隱藏清除按鈕
+        $("#clear" + this.id.charAt(0).toUpperCase() + this.id.slice(1)).hide();
+      }
+    });
+
+    // 防止屬性下拉選單在取消選項時展開
+    $('#attribute').on('select2:unselecting', function (e) {
+      $(this).data('unselecting', true);
+    }).on('select2:opening', function (e) {
+      if ($(this).data('unselecting')) {
+        $(this).removeData('unselecting');
+        e.preventDefault();
+      }
+    });
+    
+    // 初始化完成，進行篩選
+    isInitialized = true;
   });
 }
 
-// 清除關鍵字查詢
-document.getElementById("clearKeywordBtn").addEventListener("click", () => {
-  document.getElementById("keywordSelect").value = "";  // 重置選擇框
-  filterCards("");  // 清除過濾，顯示所有卡牌
+// 清除篩選條件按鈕
+clearFiltersBtn.addEventListener("click", () => {
+  // 檢查是否有任何篩選條件被選擇
+  const isAnyFilterSelected = $("#keyword").val() ||
+                              $("#type").val() !== "allOption" ||
+                              $("#bloom").val() ||
+                              $("#attribute").val() ||
+                              $("#tag").val() ||
+                              $("#set").val();
+  
+  if (isAnyFilterSelected) {
+    // 如果有篩選條件被選擇，則清除所有篩選條件
+    $("#keyword, #attribute, #bloom, #tag, #set").val("").trigger("change");
+    $("#type").val("allOption").trigger("change");
+
+    // 初始化清除按鈕狀態
+    $("#clearKeyword, #clearBloom, #clearTag, #clearSet").hide(); // 隱藏 "X"
+
+    displayCards(cardsData);  // 顯示所有卡牌
+  }
 });
 
-// 顯示卡牌的詳細資訊
-function showPopup(card) {
-  document.getElementById("popup").style.display = "flex";  // 顯示彈窗
-  document.body.style.overflow = "hidden";  // 禁用背景滾動
-  document.getElementById("popupImage").src = card.image;
-  document.getElementById("popupName").textContent = card.name;
+// 顯示卡牌
+function displayCards(cards) {
+  cardContainer.innerHTML = "";  // 清空現有卡牌
 
-  // 隱藏所有區域
-  document.getElementById('popupOshiType').style.display = 'none';
-  document.getElementById('popupHolomenType').style.display = 'none';
+  // 計算當前頁面的開始和結束索引
+  const startIndex = currentPage * cardsPerPage;
+  const endIndex = Math.min(startIndex + cardsPerPage, cards.length);
 
-  // 根據卡牌類型顯示對應的區域
-  if (card.type === 'oshi') {
-    document.getElementById('popupOshiType').style.display = 'block';
-    document.getElementById('popupOshiAttribute').textContent = card.attribute;
-    document.getElementById('popupLife').textContent = card.life;
-    document.getElementById('popupSkill').textContent = card.skill;
-    document.getElementById('popupspSkill').textContent = card.spSkill;
-    document.getElementById('popupOshiId').textContent = card.id;
+  // 如果沒有卡牌，顯示提示訊息
+  if (cards.length === 0) {
+    cardContainer.innerHTML = '<p>沒有符合的資料</p>';
+    return;
   }
-  
-  if (card.type === 'holomen') {
-    document.getElementById('popupHolomenType').style.display = 'block';
-    document.getElementById('popupTag').textContent = card.tag;
-    document.getElementById('popupHolomenAttribute').textContent = card.attribute;
-    document.getElementById('popupHP').textContent = card.hp;
-    document.getElementById('popupBloom').textContent = card.bloom;
-    document.getElementById('popupHolomenId').textContent = card.id;
-    
-    // 處理 batonImage 的情況
-    const batonImage1 = document.getElementById("popupBatonImage1");
-    const batonImage2 = document.getElementById("popupBatonImage2");
 
-    if (card.batonImage && card.batonImage.length > 0) {
-      // 有圖片，顯示第一張圖片，第二張圖片為空的情況
-      batonImage1.src = card.batonImage[0]; // 設置第一張圖片
-      batonImage1.style.display = "inline-block";  // 顯示圖片
+  for (let i = startIndex; i < endIndex; i++) {
+    const card = cards[i];
+    const cardElement = document.createElement("div");
+    cardElement.classList.add("card");
+    cardElement.innerHTML = `
+      <img src="${card.image}" alt="${card.name}">
+    `;
 
-      if (card.batonImage.length > 1) {
-        batonImage2.src = card.batonImage[1];  // 設置第二張圖片
-        batonImage2.style.display = "inline-block";  // 顯示第二張圖片
-      } else {
-        batonImage2.style.display = "none";  // 隱藏第二張圖片
-      }
-    } else {
-      // 如果 batonImage 是空數組，隱藏圖片
-      batonImage1.style.display = "none";
-      batonImage2.style.display = "none";
-    }
-
-    // 如果有聯動效果，顯示並更新它
-    if (card.collabEffect) {
-      document.getElementById('popupCollabEffectContainer').style.display = 'block';
-      document.getElementById('popupCollabEffect').textContent = card.collabEffect;
-    }else{
-      document.getElementById('popupCollabEffectContainer').style.display = 'none';
-    }
-    
-    // 如果有綻放效果，顯示並更新它
-    if (card.bloomEffect) {
-      document.getElementById('popupBloomEffectContainer').style.display = 'block';
-      document.getElementById('popupBloomEffect').textContent = card.bloomEffect;
-    }else{
-      document.getElementById('popupBloomEffectContainer').style.display = 'none';
-    }
-    
-    // 如果有天賦效果，顯示並更新它
-    if (card.giftEffect) {
-      document.getElementById('popupGiftEffectContainer').style.display = 'block';
-      document.getElementById('popupGiftEffect').textContent = card.giftEffect;
-    }else{
-      document.getElementById('popupGiftEffectContainer').style.display = 'none';
-    }
-    
-    // 如果有技能 1，顯示並更新它
-    if (card.skill1) {
-      document.getElementById('popupSkill1Container').style.display = 'block';
-      document.getElementById('popupSkill1').textContent = card.skill1;
-    }else{
-      document.getElementById('popupSkill1Container').style.display = 'none';
-    }
-
-    // 如果有技能 2，顯示並更新它
-    if (card.skill2) {
-      document.getElementById('popupSkill2Container').style.display = 'block';
-      document.getElementById('popupSkill2').textContent = card.skill2;
-    }else{
-      document.getElementById('popupSkill2Container').style.display = 'none';
-    }
-
-    // 如果有特殊規則，顯示並更新它
-    if (card.rule) {
-      document.getElementById('popupRuleContainer').style.display = 'block';
-      document.getElementById('popupRule').textContent = card.rule;
-    }else{
-      document.getElementById('popupRuleContainer').style.display = 'none';
-    }
+    // 點擊卡牌展示詳細資訊
+    cardElement.addEventListener("click", () => {
+      currentIndex = i;
+      showPopup(card, currentIndex);
+    });
+    cardContainer.appendChild(cardElement);
   }
-  
-  // 儲存目前顯示的卡牌索引
-  window.currentCardIndex = window.cards.indexOf(card);
+  // 生成分頁
+  generatePaginationControls(cards.length);
 }
 
-// 更新分頁顯示，實現省略號分頁
-function updatePagination() {
-  const totalPages = Math.ceil(filteredCards.length / cardsPerPage);  // 根據篩選後的卡片數量來計算頁數
+// 分頁控制
+function generatePaginationControls(totalCards) {
+  const totalPages = Math.ceil(totalCards / cardsPerPage);
   const paginationContainer = document.getElementById("pagination");
-
-  // 清空分頁容器
-  paginationContainer.innerHTML = '';
+  paginationContainer.innerHTML = "";  // 清空現有分頁
 
   const maxPageButtons = 5;  // 最多顯示的頁碼數量（不包括省略號）
 
@@ -243,145 +338,256 @@ function updatePagination() {
     }
   }
 
-  // 添加上一頁按鈕
-  const prevPageButton = document.createElement("button");
-  prevPageButton.classList.add('page-button');
-  prevPageButton.disabled = currentPage === 0; // 當前頁是第一頁時禁用上一頁按鈕
-  prevPageButton.textContent = "<";
-  prevPageButton.addEventListener('click', () => {
-    if (currentPage > 0) {
+  // 分頁左箭頭
+  const leftArrow = document.createElement("div");
+  leftArrow.classList.add("pagination-arrow");
+  leftArrow.innerHTML = `
+    <svg width="40" height="40" class="MuiSvgIcon-root MuiSvgIcon-fontSizeMedium css-vubbuv" focusable="false" aria-hidden="true" viewBox="0 0 24 24" data-testid="ArrowBackIosRoundedIcon">
+      <path d="M16.62 2.99c-.49-.49-1.28-.49-1.77 0L6.54 11.3c-.39.39-.39 1.02 0 1.41l8.31 8.31c.49.49 1.28.49 1.77 0s.49-1.28 0-1.77L9.38 12l7.25-7.25c.48-.48.48-1.28-.01-1.76z"></path>
+    </svg>
+  `;
+  
+  if (currentPage > 0) {
+    leftArrow.addEventListener("click", () => {
       currentPage--;
-      displayCards();
-      updatePagination();
-      scrollToTop();
-    }
-  });
-  paginationContainer.appendChild(prevPageButton);
-
-  // 顯示前面的頁碼
-  if (startPage > 0) {
-    const firstPageButton = document.createElement("button");
-    firstPageButton.textContent = "1";
-    firstPageButton.classList.add('page-button');
-    firstPageButton.addEventListener('click', () => {
-      currentPage = 0;
-      displayCards();
-      updatePagination();
+      displayCards(filteredCards);  // 更新顯示的卡牌
       scrollToTop();
     });
-    paginationContainer.appendChild(firstPageButton);
-
-    // 如果沒有顯示第一頁和省略號，添加省略號
-    if (startPage > 1) {
-      const ellipsisButton = document.createElement("span");
-      ellipsisButton.textContent = "...";
-      paginationContainer.appendChild(ellipsisButton);
-    }
+  } else {
+    leftArrow.classList.add("disabled");  // 添加禁用
+  }
+  paginationContainer.appendChild(leftArrow);
+  
+  // 如果沒有顯示第一頁和省略號，添加省略號
+  if (startPage > 1) {
+    const ellipsisButton = document.createElement("span");
+    ellipsisButton.textContent = "...";
+    paginationContainer.appendChild(ellipsisButton);
   }
 
-  // 顯示中間的頁碼
+  // 分頁按鈕
   for (let i = startPage; i < endPage; i++) {
-    const pageButton = document.createElement("button");
+    const pageButton = document.createElement("div");
     pageButton.textContent = i + 1;
-    pageButton.classList.add('page-button');
+    pageButton.classList.add("pagination-button");
     if (i === currentPage) {
-      pageButton.classList.add('active');  // 高亮顯示當前頁
+      pageButton.classList.add("active");
     }
-
-    // 點擊頁碼按鈕跳轉到該頁
-    pageButton.addEventListener('click', () => {
+    pageButton.addEventListener("click", () => {
       currentPage = i;
-      displayCards();
-      updatePagination();
+      displayCards(filteredCards);  // 點擊分頁按鈕時更新顯示的卡牌
       scrollToTop();
     });
-
     paginationContainer.appendChild(pageButton);
   }
 
-  // 顯示後面的頁碼
+  // 如果沒有顯示最後一頁和省略號，添加省略號
   if (endPage < totalPages) {
-    // 如果沒有顯示最後一頁，顯示省略號
-    if (endPage < totalPages - 1) {
-      const ellipsisButton = document.createElement("span");
-      ellipsisButton.textContent = "...";
-      paginationContainer.appendChild(ellipsisButton);
-    }
+    const ellipsisButton = document.createElement("span");
+    ellipsisButton.textContent = "...";
+    paginationContainer.appendChild(ellipsisButton);
+  }
 
-    const lastPageButton = document.createElement("button");
-    lastPageButton.textContent = totalPages;
-    lastPageButton.classList.add('page-button');
-    lastPageButton.addEventListener('click', () => {
-      currentPage = totalPages - 1;
-      displayCards();
-      updatePagination();
+  // 分頁右箭頭
+  const rightArrow = document.createElement("div");
+  rightArrow.classList.add("pagination-arrow");
+  rightArrow.innerHTML = `
+    <svg width="40" height="40" class="MuiSvgIcon-root MuiSvgIcon-fontSizeMedium css-vubbuv" focusable="false" aria-hidden="true" viewBox="0 0 24 24" data-testid="ArrowForwardIosRoundedIcon">
+      <path d="M7.38 21.01c.49.49 1.28.49 1.77 0L17.46 12.7c.39-.39.39-1.02 0-1.41l-8.31-8.31c-.49-.49-1.28-.49-1.77 0s-.49 1.28 0 1.77L14.62 12l-7.25 7.25c-.48.48-.48 1.28.01 1.76z"></path>
+    </svg>
+  `;
+  
+  if (currentPage < totalPages - 1) {
+    rightArrow.addEventListener("click", () => {
+      currentPage++;
+      displayCards(filteredCards);  // 更新顯示的卡牌
       scrollToTop();
     });
-    paginationContainer.appendChild(lastPageButton);
+  } else {
+    rightArrow.classList.add("disabled");  // 添加禁用
   }
+  paginationContainer.appendChild(rightArrow);  
+}
 
-  // 添加下一頁按鈕
-  const nextPageButton = document.createElement("button");
-  nextPageButton.classList.add('page-button');
-  nextPageButton.disabled = currentPage === totalPages - 1; // 當前頁是最後一頁時禁用下一頁按鈕
-  nextPageButton.textContent = ">";
-  nextPageButton.addEventListener('click', () => {
-    if (currentPage < totalPages - 1) {
-      currentPage++;
-      displayCards();
-      updatePagination();
-      scrollToTop();
+// 根據篩選條件顯示卡牌
+function filterCards() {
+  // 獲取篩選條件
+  const keyword = $("#keyword").val();  // 關鍵字
+  const type = $("#type").val();  // 類型
+  const bloom = $("#bloom").val(); // 綻放等級
+  const selectedAttributes = $("#attribute").val() || [];  // 屬性
+  const tag = $("#tag").val();  // 標籤
+  const set = $("#set").val();  // 卡包
+  
+  filteredCards = cardsData.filter(card => {
+    // 逐個條件篩選
+    const matchesKeyword = keyword ? card.name.toLowerCase().includes(keyword.toLowerCase()) : true;  // 如果 keyword 不為空，則篩選符合關鍵字的卡牌
+    const matchesType = type && type !== "allOption" ? card.type === type : true;  // 類型選擇框預設為 "allOption"，如果不為空則篩選
+    const matchesBloom = bloom ? card.bloom && card.bloom.includes(bloom) : true;
+    const matchesAttribute = selectedAttributes.length === 0 || selectedAttributes.some(attr => card.attribute && card.attribute.split(' / ').includes(attr));
+    const matchesTag = tag ? card.tag && card.tag.split(' / ').includes(tag) : true;  // 標籤篩選
+    const matchesSet = set ? (card.set && Array.isArray(card.set) ? card.set.some(s => s.includes(set)) : card.set.includes(set)) : true;  // 卡包篩選
+
+    // 返回符合所有條件的卡牌
+    return matchesKeyword && matchesType && matchesBloom && matchesAttribute && matchesTag && matchesSet;
+  });
+
+  // 去重邏輯：基於卡牌的所有篩選條件去重
+  const uniqueCards = removeDuplicates(filteredCards);
+  filteredCards = uniqueCards;
+  currentPage = 0;
+  displayCards(filteredCards);
+}
+
+// 去重函數，根據所有篩選條件（名稱、類型、綻放等級、屬性、標籤、卡包）進行去重
+function removeDuplicates(cards) {
+  const seen = new Set();
+  const uniqueCards = [];
+
+  cards.forEach(card => {
+    // 使用一個唯一的識別符來檢查是否已經處理過該卡牌
+    const uniqueKey = `${card.name}-${card.type}-${card.bloom}-${card.attribute}-${card.tag}-${card.set}`;
+        
+    if (!seen.has(uniqueKey)) {
+      seen.add(uniqueKey);
+      uniqueCards.push(card);
     }
   });
-  paginationContainer.appendChild(nextPageButton);
+
+  return uniqueCards;
 }
 
-// 滾動到頁面最上方
-function scrollToTop() {
-  window.scrollTo({
-    top: 0,
-    behavior: 'smooth'
-  });
-}
+// 顯示卡牌的詳細資訊
+function showPopup(card, index) {
+  document.body.style.overflow = "hidden";  // 禁用背景滾動
+  
+  // 獲取彈窗內容區域
+  const popupleft = document.getElementById('popupLeft');
+  const popupright = document.getElementById('popupRight');
 
-// 切換到上一頁
-function prevPage() {
-  if (currentPage > 0) {
-    currentPage--;
-    displayCards();
-    updatePagination();
+  popupleft.innerHTML = '';
+  popupright.innerHTML = '';
+  
+  // 創建左側區域 (顯示卡牌圖片)
+  const leftContent = document.createElement('div');
+  leftContent.className = 'popup-left';
+  leftContent.innerHTML = `
+    <img id="popupImage" src="${card.image}" alt="${card.name}">
+  `;
+
+  // 填充右側詳細資料
+  const rightContent = document.createElement('div');
+  rightContent.className = 'popup-right';
+  rightContent.innerHTML = `
+    <h2>${card.name}</h2>
+    <p><strong><span class="label">類型</span></strong> ${card.type}</p>
+  `;
+
+  if (card.type === "主推") {
+    rightContent.innerHTML += `
+      <div id="popupOshiType">
+        <p><strong><span class="label">屬性</span></strong> ${card.attribute}</p>
+        <p><strong><span class="label">生命值</span></strong> ${card.life}</p>
+        <p><strong><span class="label skill">主推技能</span></strong> ${card.skill}</p>
+        <p><strong><span class="label spSkill">SP主推技能</span></strong> ${card.spSkill}</p>
+        <p><strong><span class="label">卡包</span></strong> ${card.set}</p>
+        <p><strong><span class="label">卡牌編號</span></strong> ${card.id}</p>
+      </div>`;
   }
-}
 
-// 切換到下一頁
-function nextPage() {
-  const totalPages = Math.ceil(filteredCards.length / cardsPerPage);  // 使用篩選後的卡片數量來計算總頁數
-  if (currentPage < totalPages - 1) {
-    currentPage++;
-    displayCards();
-    updatePagination();
+  if (card.type === "成員") {
+    rightContent.innerHTML += `
+      <div id="popupHolomenType">
+        <p><strong><span class="label">綻放等級</span></strong> ${card.bloom}</p>
+        <p><strong><span class="label">標籤</span></strong> ${card.tag}</p>
+        <p><strong><span class="label">屬性</span></strong> ${card.attribute}</p>
+        <p><strong><span class="label">體力</span></strong> ${card.hp}</p>
+        ${card.collabEffect ? `<p><strong><span class="label collab">聯動</span></strong> ${card.collabEffect}</p>` : ''}
+        ${card.bloomEffect ? `<p><strong><span class="label bloom">綻放</span></strong> ${card.bloomEffect}</p>` : ''}
+        ${card.giftEffect ? `<p><strong><span class="label gift">天賦</span></strong> ${card.giftEffect}</p>` : ''}
+        ${card.skill1 ? `
+          <p>
+            <strong><span class="label skill1">藝能</span></strong>
+            <div style="display: flex; flex-direction: row; gap: 8px; align-items: center; white-space: nowrap;">
+              ${card.skill1.images.map(image => `
+                <img src="${image}" alt="Skill Image" style="width: 24%; max-height: 300px; object-fit: contain;">
+              `).join('')}
+            </div>
+            ${card.skill1.description ? `
+              <div>
+                <span>${card.skill1.description}</span>
+              </div>
+            ` : ''}
+          </p>
+        ` : ''}
+        ${card.skill2 ? `
+          <p>
+            <strong><span class="label skill1">藝能</span></strong>
+            <div style="display: flex; flex-direction: row; gap: 8px; align-items: center; white-space: nowrap;">
+              ${card.skill2.images.map(image => `
+                <img src="${image}" alt="Skill Image" style="width: 24%; max-height: 300px; object-fit: contain;">
+              `).join('')}
+            </div>
+            ${card.skill2.description ? `
+              <div>
+                <span>${card.skill2.description}</span>
+              </div>
+            ` : ''}
+          </p>
+        ` : ''}
+        <p><strong><span class="label">交棒</span></strong>
+          ${card.batonImage[0] ? `<img id="popupBatonImage1" src="${card.batonImage[0]}" alt="Baton Image 1" style="display: block; width: 48%; max-height: 300px; object-fit: contain; margin-right: 4%;">` : ''}
+          ${card.batonImage[1] ? `<img id="popupBatonImage2" src="${card.batonImage[1]}" alt="Baton Image 2" style="display: block; width: 48%; max-height: 300px; object-fit: contain;">` : ''}
+        </p>
+        ${card.rule ? `<p><strong><span class="label rule">特殊規則</span></strong> ${card.rule}</p>` : ''}
+        <p><strong><span class="label">卡包</span></strong> ${card.set}</p>
+        <p><strong><span class="label">卡牌編號</span></strong> ${card.id}</p>
+      </div>`;
   }
-}
 
-// 切換到上一張卡牌
-function prevCard() {
-  if (window.currentCardIndex === undefined || filteredCards.length === 0) return;
-  window.currentCardIndex = (window.currentCardIndex - 1 + filteredCards.length) % filteredCards.length; // 循環往回
-  const card = window.cards[window.currentCardIndex];
-  showPopup(card);
-}
+  if (card.type.includes("支援")) {
+    rightContent.innerHTML += `
+      <div id="popupSupportType">
+        ${card.tag ? `<p><strong><span class="label">標籤</span></strong> ${card.tag}</p>` : ''}
+        <p><strong><span class="label">效果</span></strong> ${card.supportEffect}</p>
+        <p><strong><span class="label">卡包</span></strong> ${card.set}</p>
+        <p><strong><span class="label">卡牌編號</span></strong> ${card.id}</p>
+      </div>`;
+  }
 
-// 切換到下一張卡牌
-function nextCard() {
-  if (window.currentCardIndex === undefined || filteredCards.length === 0) return;
-  window.currentCardIndex = (window.currentCardIndex + 1) % filteredCards.length; // 循環往前
-  const card = window.cards[window.currentCardIndex];
-  showPopup(card);
+  if (card.type === "吶喊") {
+    rightContent.innerHTML += `
+      <div id="popupYellType">
+        <p><strong><span class="label">屬性</span></strong> ${card.attribute}</p>
+        <p><strong><span class="label">效果</span></strong> ${card.yellEffect}</p>
+        <p><strong><span class="label">卡包</span></strong> ${card.set}</p>
+        <p><strong><span class="label">卡牌編號</span></strong> ${card.id}</p>
+      </div>`;
+  }
+
+  popupleft.appendChild(leftContent);
+  popupright.appendChild(rightContent);
+    
+  document.getElementById('popup').style.display = 'flex';
+
+  // 設置左右箭頭的事件，基於篩選後的卡牌
+  document.getElementById('arrowLeft').onclick = () => {
+    const previousIndex = (currentIndex - 1 + filteredCards.length) % filteredCards.length;  // 處理循環
+    currentIndex = previousIndex;  // 更新目前索引
+    showPopup(filteredCards[previousIndex], previousIndex);  // 顯示上一張卡牌
+  };
+
+  document.getElementById('arrowRight').onclick = () => {
+    const nextIndex = (currentIndex + 1) % filteredCards.length;  // 處理循環
+    currentIndex = nextIndex;  // 更新目前索引
+    showPopup(filteredCards[nextIndex], nextIndex);  // 顯示下一張卡牌
+  };
 }
 
 // 關閉彈窗
-document.getElementById("closePopup").addEventListener("click", () => {
-  document.getElementById("popup").style.display = "none";  // 隱藏彈窗
+document.getElementById('closePopup').addEventListener('click', function() {
+  const popup = document.getElementById('popup');
+  popup.style.display = 'none';
   document.body.style.overflow = "auto";  // 恢復背景滾動
 });
 
@@ -393,20 +599,23 @@ document.getElementById("popup").addEventListener("click", (e) => {
   }
 });
 
-// 監聽左右箭頭的點擊事件
-document.getElementById("arrowLeft").addEventListener("click", prevCard);  // 左箭頭
-document.getElementById("arrowRight").addEventListener("click", nextCard);  // 右箭頭
+// 滾動到頁面最上方
+function scrollToTop() {
+  window.scrollTo({
+    top: 0,
+    behavior: 'smooth'
+  });
+}
 
-// 頁面加載後載入卡牌資料
-window.onload = loadCards;
-
-let lastScrollTop = 0; // 上次滾動的位置
+// 滾動隱藏 header
+let lastScrollTop = 0;  // 上次滾動的位置
+let hideThreshold = 100;  // 滾動距離達到 100px 時才開始隱藏 header
 
 window.addEventListener('scroll', function() {
   const header = document.querySelector('header');
   const currentScroll = window.pageYOffset || document.documentElement.scrollTop;
 
-  if (currentScroll > lastScrollTop) {
+  if (currentScroll > lastScrollTop && currentScroll > hideThreshold) {
     // 滾動往下，隱藏 header
     header.classList.add('hidden');
   } else {
@@ -415,5 +624,5 @@ window.addEventListener('scroll', function() {
   }
 
   // 更新滾動位置
-  lastScrollTop = currentScroll <= 0 ? 0 : currentScroll; // 防止滾動過多
+  lastScrollTop = currentScroll <= 0 ? 0 : currentScroll;  // 防止滾動過多
 });
