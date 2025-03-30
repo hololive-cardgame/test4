@@ -174,6 +174,7 @@ function generateFilterOptions() {
       placeholder: "",
       minimumResultsForSearch: Infinity,
       width: "100%"
+      tags: false;
     });
     
     // 設定初始值不觸發
