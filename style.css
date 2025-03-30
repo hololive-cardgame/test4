@@ -1,360 +1,227 @@
-/* 基本樣式設置 */
+/* 基本设置 */
 * {
   margin: 0;
   padding: 0;
   box-sizing: border-box;
 }
 
-/* 頁面根布局 */
-html, body {
-  height: 100%;
-  margin: 0;
-  font-family: Arial, sans-serif;
-  display: flex;
-  flex-direction: column;
-}
-
-/* 頁面主體 */
 body {
-  flex-grow: 1; /* 使主體部分可以填充剩餘空間 */
-  display: flex;
-  flex-direction: column;
+  font-family: Arial, sans-serif;
+  background-color: #222; /* 深色背景 */
+  color: #fff; /* 白色文本 */
 }
 
-/* Header隱藏和顯示的過渡效果 */
+h1, h2, h3, h4, h5, h6 {
+  font-family: 'Arial', sans-serif;
+}
+
+/* Header 样式 */
 header {
-  height: 64px;
-  position: fixed;
-  top: 0;
-  left: 0;
-  width: 100%;
-  background-color: #aa79a8; /* 背景顏色 */
-  color: white; /* 文字顏色 */
+  background-color: #000; /* 黑色背景 */
+  color: #FFD700; /* 黄色文本 */
   padding: 20px;
-  display: flex;
-  align-items: center;
-  z-index: 10; /* 確保header在最上層 */
-  transition: transform 0.3s ease-in-out; /* 設置過渡效果 */
-}
-
-header.hidden {
-  transform: translateY(-100%); /* 隱藏header，將其往上移動 */
+  text-align: center;
 }
 
 header h1 {
-  font-size: 1.25rem; /* 字體大小 */
-  margin-left: 20px; /* 靠左對齊，並加上邊距 */
+  font-size: 2.5rem;
 }
 
-/* 頁面主體布局 */
+/* 主体区域 */
 main {
   display: flex;
-  flex-direction: row;
-  justify-content: flex-start;
-  align-items: flex-start;
-  gap: 20px;
+  justify-content: space-between;
   padding: 20px;
-  padding-top: 90px;
-  box-sizing: border-box;
-  flex-grow: 1; /* 保證main部分能夠佔滿剩餘空間 */
-  min-height: 100vh;
 }
 
-/* Left Panel: 關鍵字篩選區 */
-.left-panel {
-  padding: 20px;
-  background-color: #fff;
-  width: 480px;
-  border: 1px solid rgba(0,0,0,.23);
+.left-side, .right-side {
+  width: 48%;
 }
 
-/* 標籤樣式 */
-.left-panel label {
-  font-size: 16px;
-  margin-bottom: 8px;
+.filter-container {
+  margin-bottom: 20px;
+}
+
+label {
   display: block;
+  font-weight: bold;
+  margin-bottom: 5px;
+  color: #FFD700; /* 黄色文字 */
 }
 
-/* Select 下拉選單樣式 */
-.select-container {
-  position: relative;
-}
-
-select#keywordSelect {
+select {
   width: 100%;
-  padding: 8px 40px 8px 10px; /* 右側預留空間放清除按鈕 */
-  border: 1px solid #ccc;
-  border-radius: 4px;
-  font-size: 14px;
-  background-color: #fff;
-  appearance: none; /* 去除瀏覽器預設樣式 */
+  padding: 8px;
+  border: 1px solid #FFD700; /* 黄色边框 */
+  background-color: #333; /* 深色背景 */
+  color: #fff; /* 白色文字 */
+  font-size: 1rem;
 }
 
-select#keywordSelect:focus {
-  border-color: #007bff;
-  outline: none;
-}
-
-/* 清除按鈕樣式 */
-.clear-btn {
-  position: absolute;
-  right: 10px;
-  top: 50%;
-  transform: translateY(-50%);
-  font-size: 18px;
-  background: transparent;
-  border: none;
+.clear-button {
   cursor: pointer;
-  color: #aaa;
-  display: none;  /* 預設隱藏 */
+  color: #FFD700;
+  display: inline-block;
+  margin-top: 5px;
 }
 
-.clear-btn:hover {
-  color: #f00;
+#clearFilters {
+  background-color: #FF3C3C; /* 红色背景 */
+  color: white;
+  padding: 10px;
+  text-align: center;
+  cursor: pointer;
+  font-weight: bold;
+  border-radius: 5px;
+  margin-top: 20px;
 }
 
-/* 右側卡牌展示區 */
-.right-panel {
-  flex-grow: 1; /* 填充剩餘空間 */
-  display: grid;
-  grid-template-columns: repeat(5, 1fr); /* 默認每行5張卡片 */
+#clearFilters:hover {
+  background-color: #FF1E1E; /* 悬停时深红色 */
+}
+
+/* 卡牌展示区 */
+#cardContainer {
+  display: flex;
+  flex-wrap: wrap;
   gap: 20px;
-  padding: 20px;
-  box-sizing: border-box;
 }
 
-/* 卡牌樣式 */
 .card {
-  width: 100%;
-  aspect-ratio: 3 / 4; /* 設置寬高比 */
-  background-color: #fff;
+  width: 200px;
+  height: 300px;
+  background-color: #444;
+  color: #fff;
   border-radius: 10px;
-  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
-  cursor: pointer;
-  transition: transform 0.3s;
+  padding: 10px;
+  text-align: center;
 }
 
 .card img {
   width: 100%;
-  height: 100%;
-  object-fit: contain;
+  height: 200px;
+  object-fit: cover;
   border-radius: 10px;
 }
 
-.card:hover {
-  transform: translateY(-10px); /* 浮起效果 */
+/* 分页区域 */
+#pagination {
+  display: flex;
+  justify-content: center;
+  margin-top: 20px;
 }
 
-/* 彈窗樣式 */
+.pagination-button {
+  padding: 10px;
+  background-color: #FF3C3C; /* 红色按钮 */
+  color: white;
+  margin: 0 5px;
+  cursor: pointer;
+  border-radius: 5px;
+}
+
+.pagination-button:hover {
+  background-color: #FF1E1E; /* 深红色 */
+}
+
+.pagination-arrow {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+}
+
+.disabled {
+  background-color: #777; /* 禁用状态 */
+  cursor: not-allowed;
+}
+
+.pagination-button.active {
+  background-color: #FFD700; /* 当前页用黄色突出 */
+}
+
+.pagination-button.active:hover {
+  background-color: #FFD700; /* 悬停时黄色不变 */
+}
+
+/* 弹窗区域 */
 .popup {
+  display: none;
   position: fixed;
   top: 0;
   left: 0;
   width: 100%;
   height: 100%;
-  background-color: rgba(0, 0, 0, 0.5); /* 半透明背景 */
-  display: none; /* 預設隱藏彈窗 */
+  background-color: rgba(0, 0, 0, 0.8);
   justify-content: center;
   align-items: center;
-  z-index: 9999;
 }
 
-/* 彈窗內部內容 */
 .popup-content {
   display: flex;
-  background-color: white;
-  border-radius: 10px;
-  overflow: hidden;
-  width: 80%;
-  max-width: 1500px;
-  position: relative; /* 設定為相對定位，這樣X按鈕就可以相對於這個容器定位 */
-}
-
-/* 基本樣式，所有的標籤共用 */
-.label {
-  display: inline-block;         /* 讓 span 變為區塊級元素，可以設置寬高 */
-  padding: 0px 20px;             /* 上下和左右的內邊距，控制橢圓形 */
-  background-color: #534B88;     /* 背景色，可以根據需求設置顏色 */
-  border-radius: 20px;           /* 圓角，設置足夠的值來創建橢圓形 */
-  font-weight: normal;           /* 去除粗體，保留原樣 */
-  color: white;                   /* 設置字體顏色 */
-  margin-bottom: 20px;
-}
-
-.label.collab {
-  background-color: #cc101a;     /* 聯動效果標籤 */
-}
-
-.label.bloom {
-  background-color: #0076be;     /* 綻放效果標籤 */
-}
-
-.label.gift {
-  background-color: #069039;     /* 天賦效果標籤 */
-}
-
-.label.skill {
-  background-color: #ED798D;     /* 主推技能標籤 */
-}
-
-.label.spSkill, .label.skill1, .label.skill2 {
-  background-image: linear-gradient(110deg, rgb(123, 90, 163), rgb(95, 182, 231) 55%, rgb(229, 51, 122));     /* SP主推技能、藝能標籤 */
-}
-
-.label.rule {
-  background-image: linear-gradient(90deg, rgb(245, 218, 114), rgb(221, 159, 51) 50%, rgb(245, 218, 114));     /* 特殊規則標籤 */
-}
-
-strong {
-  margin-right: 10px;
-}
-
-/* X 按鈕樣式 */
-.close-btn {
-  position: absolute;  /* 使用絕對定位 */
-  top: 9px;           /* 距離頂部9px */
-  right: 10px;         /* 距離右邊10px */
-  font-size: 2rem;
-  color: white;
-  background-color: red;
-  border-radius: 50%;
-  width: 30px;
-  height: 30px;
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  cursor: pointer;
-}
-
-.close-btn:hover {
-  background-color: darkred;
-}
-
-/* 彈窗內部圖片 */
-.popup-left {
-  flex: 2;
+  background-color: #222;
   padding: 20px;
-  display: flex;
+  border-radius: 10px;
+  width: 80%;
+  max-width: 1000px;
 }
 
 .popup-left img {
-  width: 100%;  /* 讓圖片寬度自動填滿容器 */
-  height: auto; /* 高度根據寬度自動調整 */
-  aspect-ratio: 68 / 95;  /* 設置長寬比為 68:95 */
+  max-width: 300px;
+  border-radius: 10px;
 }
 
 .popup-right {
-  flex: 3;
-  padding: 20px;
-  line-height: 2;
+  padding-left: 20px;
+  color: #FFD700;
 }
 
-.popup img {
-  width: 100%;
-  height: auto;
-}
-
-/* 左右箭頭樣式 */
-.arrow-left, .arrow-right {
+.close-popup {
   position: absolute;
-  top: 50%;
-  transform: translateY(-50%);
-  font-size: 30px;
-  width: 40px;
-  height: 40px;
-  fill: white;  /* 設定箭頭顏色為白色 */
-  background-color: red;
-  border-radius: 50%;
-  padding: 7px;
+  top: 10px;
+  right: 10px;
   cursor: pointer;
-  user-select: none;
-}
-.arrow-left:hover, .arrow-right:hover {
-  background-color: darkred;
+  color: #FFD700;
 }
 
-.arrow-left {
-  left: 10px;  /* 左側箭頭的位置 */
+.close-popup:hover {
+  color: #FF3C3C;
 }
 
-.arrow-right {
-  right: 10px;  /* 右側箭頭的位置 */
-}
-
-/* 分頁按鈕容器 */
-#pagination {
-  display: flex;
-  justify-content: center;  /* 水平居中對齊 */
-  align-items: center;      /* 垂直居中對齊 */
-  position: relative;
-  left: 0;                  /* 從左邊開始 */
-  right: 0;                 /* 到右邊結束 */
-  bottom: 20px;             /* 距離頁面底部20px，可以根據需要調整 */
-  z-index: 1000;            /* 確保它不被其他內容覆蓋 */
-  margin-top: 65px;         /* 在卡牌展示區與分頁按鈕之間留出間距 */
-  margin-bottom: 20px;      /* 在footer與分頁按鈕之間留出間距 */
-}
-
-/* 每個分頁按鈕 */
-#pagination button {
-  padding: 10px 15px;
-  margin: 0 3px;  /* 按鈕間的距離 */
-  cursor: pointer;
-  background-color: #f0f0f0;
-  border: 1px solid #ccc;
-  border-radius: 50%;
-}
-
-#pagination button:hover {
-  background-color: #ddd;
-}
-
-/* 當前頁的按鈕樣式 */
-#pagination .active {
-  background-color: #cc101a;  /* 當前頁的顏色 */
-  font-weight: bold;
-}
-
-/* 禁用的按鈕樣式 */
-#pagination button:disabled {
-  background-color: #ccc;
-  cursor: not-allowed;
-}
-
-/* footer始终在頁面底部 */
+/* Footer 样式 */
 footer {
-  padding: 20px;
-  background-color: #333;
-  color: #fff;
+  background-color: #000; /* 黑色背景 */
+  color: #FFD700; /* 黄色文字 */
   text-align: center;
-  font-size: 14px;
-  width: 100%;
-  margin-top: auto; /* 保證footer在頁面底部 */
+  padding: 20px;
 }
 
-/* 設定Footer文字間距 */
 footer p {
-  margin: 5px 0;
+  font-size: 0.9rem;
 }
 
-/* RWD響應式設計 */
-/* 當螢幕寬度小於1024px時，每行顯示3張卡片 */
-@media (max-width: 1024px) {
-  .right-panel {
-    grid-template-columns: repeat(3, 1fr); /* 每行顯示 3 張 */
-  }
+/* 按钮样式 */
+button {
+  background-color: #FF3C3C; /* 红色背景 */
+  color: white;
+  border: none;
+  padding: 10px;
+  cursor: pointer;
+  border-radius: 5px;
 }
 
-/* 當螢幕寬度小於768px時，每行顯示2張卡片 */
-@media (max-width: 768px) {
-  .right-panel {
-    grid-template-columns: repeat(2, 1fr); /* 每行顯示 2 張 */
-  }
+button:hover {
+  background-color: #FF1E1E; /* 深红色 */
 }
 
-/* 當螢幕寬度小於480px時，每行顯示1張卡片 */
-@media (max-width: 480px) {
-  .right-panel {
-    grid-template-columns: 1fr; /* 每行顯示 1 張 */
-  }
+/* Select2 样式 */
+.select2-container .select2-selection--single {
+  background-color: #333; /* 深色背景 */
+  color: #fff; /* 白色文字 */
+  border: 1px solid #FFD700; /* 黄色边框 */
+}
+
+.select2-container--default .select2-results__option--highlighted {
+  background-color: #FF3C3C; /* 红色高亮 */
+  color: white;
 }
