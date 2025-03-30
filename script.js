@@ -174,7 +174,12 @@ function generateFilterOptions() {
       placeholder: "",
       minimumResultsForSearch: Infinity,
       width: "100%",
-      tags: false
+      tags: false,
+      createSearchChoice: function(term, data) {
+    return null;  // 禁止用戶手動輸入選項
+  },
+  dropdownAutoWidth: true,
+  escapeMarkup: function (markup) { return markup; } 
     });
     
     // 設定初始值不觸發
