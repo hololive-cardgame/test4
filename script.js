@@ -173,8 +173,8 @@ function generateFilterOptions() {
     $("#keyword, #attribute, #bloom, #tag, #set").select2({
       placeholder: "",
       minimumResultsForSearch: Infinity,
-      width: "100%"
-      tags: false;
+      width: "100%",
+      tags: false
     });
     
     // 設定初始值不觸發
