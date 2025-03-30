@@ -21,6 +21,7 @@
         <!-- 篩選條件 -->
         <form id="filterForm">
           <div class="filter-container">
+            <div class="select-container">
             <label for="keyword">關鍵字</label>
             <select id="keyword" name="keyword">
               <!-- 下拉選單選項會從 JSON 動態加載 -->
@@ -30,24 +31,30 @@
                 <path d="M19 6.41L17.59 5 12 10.59 6.41 5 5 6.41 10.59 12 5 17.59 6.41 19 12 13.41 17.59 19 19 17.59 13.41 12z"></path>
               </svg>
             </span>
+            </div>
           </div>
 
           <div class="filter-container">
             <label for="type">類型</label>
+            <div class="select-container">
             <select id="type" name="type">
               <!-- 下拉選單選項會從 JSON 動態加載 -->
             </select>
+            </div>
           </div>
 
           <div class="filter-container">
             <label for="attribute">屬性</label>
+            <div class="select-container">
               <select id="attribute" name="attribute" multiple="multiple">
                 <!-- 下拉選單選項會從 JSON 動態加載 -->
               </select>
+            </div>
           </div>
 
           <div class="filter-container">
             <label for="bloom">綻放等級</label>
+            <div class="select-container">
             <select id="bloom" name="bloom">
               <!-- 下拉選單選項會從 JSON 動態加載 -->
             </select>
@@ -56,10 +63,12 @@
                 <path d="M19 6.41L17.59 5 12 10.59 6.41 5 5 6.41 10.59 12 5 17.59 6.41 19 12 13.41 17.59 19 19 17.59 13.41 12z"></path>
               </svg>
             </span>
+            </div>
           </div>
 
           <div class="filter-container">
             <label for="tag">標籤</label>
+            <div class="select-container">
             <select id="tag" name="tag">
               <!-- 下拉選單選項會從 JSON 動態加載 -->
             </select>
@@ -68,10 +77,12 @@
                 <path d="M19 6.41L17.59 5 12 10.59 6.41 5 5 6.41 10.59 12 5 17.59 6.41 19 12 13.41 17.59 19 19 17.59 13.41 12z"></path>
               </svg>
             </span>
+              <div>
           </div>
 
           <div class="filter-container">
             <label for="set">卡包</label>
+            <div class="select-container">
             <select id="set" name="set">
               <option value="" disabled selected></option>
               <!-- 下拉選單選項會從 JSON 動態加載 -->
@@ -81,6 +92,7 @@
                 <path d="M19 6.41L17.59 5 12 10.59 6.41 5 5 6.41 10.59 12 5 17.59 6.41 19 12 13.41 17.59 19 19 17.59 13.41 12z"></path>
               </svg>
             </span>
+              </div>
           </div>
 
           <!-- 清除篩選條件 -->
