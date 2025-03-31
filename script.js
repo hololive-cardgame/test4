@@ -175,6 +175,7 @@ function generateFilterOptions() {
       minimumResultsForSearch: Infinity,
       width: "100%",
       tags: false,
+      allowClear: true,
       createSearchChoice: function(term, data) {
     return null;  // 禁止用戶手動輸入選項
   },
